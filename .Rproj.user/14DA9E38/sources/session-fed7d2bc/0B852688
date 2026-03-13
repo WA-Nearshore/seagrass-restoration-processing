@@ -1,0 +1,27 @@
+{
+    "id": "0B852688",
+    "path": "K:/projects/Eelgrass_Restoration/Restoration_Storymap/2025_09_data_prep/code/planting_1_process.r",
+    "project_path": "code/planting_1_process.r",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1759248265355.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "0,4",
+        "scrollLine": "0",
+        "marks": "<:64,53\n>:64,76"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1759260005,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1759260005826,
+    "read_only": false,
+    "read_only_alternatives": []
+}
