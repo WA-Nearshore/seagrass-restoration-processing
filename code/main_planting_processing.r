@@ -20,6 +20,8 @@ library(tidyverse)
 source("code/functions/get_sheets.r")
 source("code/config_Matrix.r")
 
-
-sheets <- get_sheets(xlpath, matrix_sheets)
-
+# import Seagrass Restoration data from Matrix Excel spreadsheet
+matrix_sheets <- get_sheets(xlpath, sheet_names, skip_lines)
+for (isheet in seq(1,length(matrix_sheets))) {
+  assign(new_sheet_names[isheet], matrix_sheets[[isheet]])
+}
