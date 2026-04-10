@@ -1,0 +1,42 @@
+# define project codes to use as related table keys
+
+prj_codes <- data.frame( 
+  prj_names_in = c("20% more ZM",
+                  "BESE: Biodegradable ecosystem engineering elements",
+                  "DNR",
+                  "Eelgrass Recovery in PS",
+                  "Eelgrass Recovery in the San Juan Islands",
+                  "Eelgrass Restoration in PS",
+                  "Eelgrass Restoration in Puget Sound",
+                  "King County",
+                  "Port Gamble Bay Eelgrass Restoration Project",
+                  "Puget Sound Eelgrass Restoration: 3 deltas",
+                  "Zm Restoration Methods Assessment",
+                  "unaffiliated"),
+  prj_codes = c("twentypc",
+                "bese",
+                "dnr",
+                "zos_rec_ps",
+                "zos_rec_sji",
+                "zos_rest_ps",
+                "zos_rest_ps",
+                "kingco",
+                "zos_rest_pgamble",
+                "zos_rest_3_deltas",
+                "zos_rest_methods",
+                "unaffiliated"),
+  prj_names_out = c("20% more ZM",
+                  "BESE: Biodegradable ecosystem engineering elements",
+                  "DNR",
+                  "Eelgrass Recovery in Puget Sound",
+                  "Eelgrass Recovery in the San Juan Islands",
+                  "Eelgrass Restoration in Puget Sound",
+                  "Eelgrass Restoration in Puget Sound",
+                  "King County",
+                  "Port Gamble Bay Eelgrass Restoration Project",
+                  "Puget Sound Eelgrass Restoration: 3 deltas",
+                  "Zm Restoration Methods Assessment",
+                  "unaffiliated")
+)
+  
+                
