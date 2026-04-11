@@ -7,7 +7,7 @@
 #
 #  Elements of this program:
 #    1. read sources tables from Matrix Excel spreadsheet.
-#    2. conduct basic QA
+#    2. conduct basic cleanup and QA
 #    3.  
 #    4. publish the
 #
