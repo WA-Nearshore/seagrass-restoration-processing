@@ -1,18 +1,18 @@
 #########1#########2#########3#########4#########5#########6#########7#########8
 #
-#  Main program to process the two planting tables for the seagrass restoration
-#  program.
+#  Main program to process the two planting tables in the Matrix spreadsheet
+#  containing data from the seagrass restoration program.
 #
 #  The two tables to be processed:  planting_GPS_points and plantings
 #
 #  Elements of this program:
 #    1. read sources tables from Matrix Excel spreadsheet.
 #    2. conduct basic cleanup and QA
-#    3.  
+#    3. extract projects attributes and create a subprojects table
 #    4. publish the
 #
 #
-#  March 2026
+#  April 2026
 #
 ###############################################################################
 
@@ -32,12 +32,20 @@ for (isheet in seq(1,length(matrix_sheets))) {
 # Initial clean of planting_gps_pts (filters to table rows; remove dup col)
 p_gps_pts_cln <- clean_planting_gps_pts(planting_gps_pts)
 
-
 # Create projects table by extracting from planting_gps_pts and using keys
 prj_out_list <- create_prj(p_gps_pts_cln)
 sub_projects <- prj_out_list[[1]]
 p_gps_pts <- prj_out_list[[2]]
 
+# Convert planting gps point records into spatial layers for each geometry.
+# Function takes p_gps_pts and returns pt,ln,py layers and planting attributes
+make_geom_list <- create_lyrs(p_gps_pts)
+
+# Create planting_centroids layer
+
+# Create Online layers with same schema (with graph URLs)
+
+# Update Online layers
 
 
 
