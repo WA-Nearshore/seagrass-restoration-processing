@@ -20,6 +20,7 @@ library(tidyverse)
 source("code/functions/get_sheets.r")
 source("code/functions/create_prj.r")
 source("code/functions/clean_planting_gps_pts.r")
+source("code/functions/create_lyrs.r")
 source("code/config_Matrix.r")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
@@ -56,5 +57,7 @@ rm(isheet,get_sheets,matrix_sheets,new_sheet_names,skip_lines,sheet_names)
 rm(xlpath)
 rm(planting_gps_pts)
 rm(clean_planting_gps_pts, create_prj, distill_vals)
+rm(make_geom_list)
+rm(create_lyrs)
 rm(p_gps_pts_cln, prj_out_list, prj_codes)
 

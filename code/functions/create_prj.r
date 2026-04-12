@@ -17,7 +17,7 @@ library(tidyverse)
 source("code/config_prj_codes.r")
 
 
-# function to process data in summarize function below
+# function to reduce data in summarize function below
 distill_vals <- function(in_values) {
   uniqvals <- unique(in_values)
   uniqvals_clean <- na.omit(uniqvals)
@@ -50,7 +50,7 @@ create_prj <- function(p_gps_pts_cln) {
 
    
   ###############################################
-  # join project codes
+  # join project codes & revised proj names
   ###############################################
   
   # check if project names in input data match codes from config file
@@ -98,7 +98,8 @@ create_prj <- function(p_gps_pts_cln) {
               contract_dnr_number = distill_vals(contract_dnr_number),
               citation = distill_vals(citation))
  
-  # remove project attributes from planting gps points
+  # remove project attributes from planting gps points, leaving subproj_code
+  # as a foreign key to relate to :the subprojects table
   prj_col_names2 <- str_subset(prj_col_names,"subproj_code", negate=TRUE)
   p_gps_pts_revised <- p_gps_pts_jn_code %>% select(-all_of(prj_col_names2))
    
