@@ -33,7 +33,14 @@ create_lyrs <- function(p_gps_pts) {
   print(na_recs$site_name)
   cat("\n")
   
+  # Convert data frames with lat/lon columns into spatial sf objects
+  # Filter out plantings with records missing lat/lon
+  # First convert to point features
+  # Second assemble points into line and polygon features
   
+  
+  
+  #  
   
   
   
