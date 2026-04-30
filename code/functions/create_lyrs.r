@@ -20,6 +20,11 @@ library(tidyverse)
 
 create_lyrs <- function(p_gps_pts) {
 
+  # create planting key; somewhat complex so passed to function
+  p_gps_pts_pltkey <- create_planting_key(p_gps_pts) 
+  
+  
+  
   # summarize table by planting location + date + method 
   pdm <- p_gps_pts %>% 
     mutate(pdmkey = str_c(planting_location_code, 
