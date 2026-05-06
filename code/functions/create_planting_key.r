@@ -44,6 +44,16 @@ create_planting_key <- function(p_gps_pts) {
     }
   }
   
+  # add planting key that is unique for plantings, not GPS points
+  p_gps_pts1 <- p_gps_pts1 %>%
+    mutate(plantingID = str_c(planting_location_code, 
+                              format(planting_date, "%Y%m%d"),
+                              planting_method,
+                              donor_site_code,
+                              sep = "."))
+  
+  
+  
   # summarize on group number
   group_summary <- p_gps_pts1 %>%
     group_by(group_no) %>%
