@@ -16,7 +16,7 @@ library(tidyverse)
 group_process <- function(indata,group_no) {
   n0 <- length(indata)
   indata_cln <- na.omit(indata)
-  n1 <- length(indata_cln)
+  n1 <- length(unique(indata_cln))
   if (n1 == 0) {
     print(sprintf("Error: group %d is all NA: %d  %d",group_no[1],n0,n1))
   }
@@ -44,22 +44,12 @@ create_planting_key <- function(p_gps_pts) {
     }
   }
   
-  # add planting key that is unique for plantings, not GPS points
-  p_gps_pts1 <- p_gps_pts1 %>%
-    mutate(plantingID = str_c(planting_location_code, 
-                              format(planting_date, "%Y%m%d"),
-                              planting_method,
-                              donor_site_code,
-                              sep = "."))
-  
-  
-  
   # summarize on group number
   group_summary <- p_gps_pts1 %>%
     group_by(group_no) %>%
     summarize(loc_code = group_process(planting_location_code, group_no),
-              method = group_process(planting_method))
-  
+              method = group_process(planting_method),
+              donorsites = group_process(donor_site_nam))
   
   
 }

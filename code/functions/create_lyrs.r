@@ -17,6 +17,7 @@
 ###############################################################################
 
 library(tidyverse)
+source("code/functions/create_planting_key.r")
 
 create_lyrs <- function(p_gps_pts) {
 
