@@ -25,19 +25,6 @@ create_lyrs <- function(p_gps_pts) {
   p_gps_pts_pltkey <- create_planting_key(p_gps_pts) 
   
   
-  
-  # summarize table by planting location + date + method 
-  pdm <- p_gps_pts %>% 
-    mutate(pdmkey = str_c(planting_location_code, 
-                          format(planting_date, "%Y%m%d"),
-                          planting_method,
-                          sep="_")) %>%
-    group_by(pdmkey) %>%
-    summarize(count = n())
-    
-  
-  
-  
   # separate records by geometry type
   pt_recs <- p_gps_pts %>% filter(planting_geometry == "point")
   ln_recs <- p_gps_pts %>% filter(planting_geometry == "line")

@@ -19,6 +19,7 @@ group_process <- function(indata,group_no) {
   n1 <- length(unique(indata_cln))
   if (n1 == 0) {
     print(sprintf("Error: group %d is all NA: %d  %d",group_no[1],n0,n1))
+    return(NA)
   }
   else if (n1 == 1) {
    return(indata_cln[1])
@@ -49,7 +50,11 @@ create_planting_key <- function(p_gps_pts) {
     group_by(group_no) %>%
     summarize(loc_code = group_process(planting_location_code, group_no),
               method = group_process(planting_method),
-              donorsites = group_process(donor_site_nam))
+              donorsites = group_process(donor_site_name))
+  
+  # make planting key = location + date + method + donor site 
+  
+  
   
   
 }

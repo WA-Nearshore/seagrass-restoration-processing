@@ -19,6 +19,10 @@ clean_planting_gps_pts <- function(planting_gps_pts) {
     select(-planting_geometry...23) %>%
     rename("planting_geometry" = "planting_geometry...7")
   
+  # remove records with NA as planting_location_code (BESE with setup issue)
+  p_gps_pts_cln <- p_gps_pts_cln %>% filter(!is.na(planting_location_code))
+  
+  
   return(p_gps_pts_cln)
   
 }
