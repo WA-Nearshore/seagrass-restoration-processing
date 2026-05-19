@@ -31,7 +31,7 @@ for (isheet in seq(1,length(matrix_sheets))) {
 }
 
 # Initial clean of planting_gps_pts 
-# filters to table rows; remove dup col, remove location=NA records (BESE)
+# filters to table rows; remove dup col, remove mocation=NA records (BESE)
 p_gps_pts_cln <- clean_planting_gps_pts(planting_gps_pts)
 
 # Create projects table by extracting from planting_gps_pts and using keys
