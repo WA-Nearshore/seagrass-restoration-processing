@@ -22,20 +22,18 @@ source("code/functions/create_planting_key.r")
 create_lyrs <- function(p_gps_pts) {
 
   # create planting key; somewhat complex so passed to function
-  p_gps_pts_pltkey <- create_planting_key(p_gps_pts) 
+  listReturnObj<- create_planting_key(p_gps_pts) 
+  p_gps_pts_key <- listReturnObj[[1]]
+  plantings_skeleton <- listReturnObj[[2]]
   
   
-  # summarize on group number
-  group_summary <- p_gps_pts1 %>%
-    group_by(group_no) %>%
-    summarize(loc_code = group_process(planting_location_code, group_no),
-              method = group_process(planting_method),
-              donorsites = group_process(donor_site_name))
+  # create plantings table 
+  # Distill planting attributes from p_gps_pts_key and combine with skeleton
   
   
   
   
-  # separate records by geometry type
+  # separate records by geometry type [ALL VALUES VALID ??]
   pt_recs <- p_gps_pts %>% filter(planting_geometry == "point")
   ln_recs <- p_gps_pts %>% filter(planting_geometry == "line")
   py_recs <- p_gps_pts %>% filter(planting_geometry == "polygon")
