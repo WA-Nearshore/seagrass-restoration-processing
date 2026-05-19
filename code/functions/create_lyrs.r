@@ -25,6 +25,16 @@ create_lyrs <- function(p_gps_pts) {
   p_gps_pts_pltkey <- create_planting_key(p_gps_pts) 
   
   
+  # summarize on group number
+  group_summary <- p_gps_pts1 %>%
+    group_by(group_no) %>%
+    summarize(loc_code = group_process(planting_location_code, group_no),
+              method = group_process(planting_method),
+              donorsites = group_process(donor_site_name))
+  
+  
+  
+  
   # separate records by geometry type
   pt_recs <- p_gps_pts %>% filter(planting_geometry == "point")
   ln_recs <- p_gps_pts %>% filter(planting_geometry == "line")
