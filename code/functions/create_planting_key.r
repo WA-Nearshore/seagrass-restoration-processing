@@ -22,23 +22,7 @@
 ###############################################################################
 
 library(tidyverse)
-
-# define function to use in summarization - reduces vector to single value
-group_process <- function(indata,group_no) {
-  n0 <- length(indata)
-  indata_cln <- na.omit(indata)
-  n1 <- length(unique(indata_cln))
-  if (n1 == 0) {
-    print(sprintf("Error: group %d is all NA: %d  %d",group_no[1],n0,n1))
-    return(NA)
-  }
-  else if (n1 == 1) {
-   return(indata_cln[1])
-  } else if (n1 > 1) {
-   return("multiple") 
-  }
-}
-
+source("code/functions/group_process.r")
 
 
 create_planting_key <- function(p_gps_pts) {

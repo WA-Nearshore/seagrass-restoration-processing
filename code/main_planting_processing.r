@@ -9,10 +9,11 @@
 #    1. read sources tables from Matrix Excel spreadsheet.
 #    2. conduct basic cleanup and QA
 #    3. extract projects attributes and create a subprojects table
-#    4. publish the
+#    4. extract planting attributes and create a plantings table
+#    5.
 #
 #
-#  April 2026
+#  May 2026
 #
 ###############################################################################
 
@@ -20,7 +21,7 @@ library(tidyverse)
 source("code/functions/get_sheets.r")
 source("code/functions/create_prj.r")
 source("code/functions/clean_planting_gps_pts.r")
-source("code/functions/create_lyrs.r")
+source("code/functions/create_plantings.r")
 source("code/config_Matrix.r")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
@@ -31,17 +32,18 @@ for (isheet in seq(1,length(matrix_sheets))) {
 }
 
 # Initial clean of planting_gps_pts 
-# filters to table rows; remove dup col, remove mocation=NA records (BESE)
+# filters to table rows; remove dup col, remove location=NA records
 p_gps_pts_cln <- clean_planting_gps_pts(planting_gps_pts)
 
 # Create projects table by extracting from planting_gps_pts and using keys
 prj_out_list <- create_prj(p_gps_pts_cln)
 sub_projects <- prj_out_list[[1]]
-p_gps_pts <- prj_out_list[[2]]
+p_gps_pts0 <- prj_out_list[[2]]
 
-# Convert planting gps point records into spatial layers for each geometry.
-# Function takes p_gps_pts and returns pt,ln,py layers and planting attributes
-make_geom_list <- create_lyrs(p_gps_pts)
+# Create plantings table; add plantingID key to p_gps_pts 
+plantings_out_list<- create_plantings(p_gps_pts0)
+
+
 
 # Create planting_centroids layer
 
@@ -58,7 +60,5 @@ rm(isheet,get_sheets,matrix_sheets,new_sheet_names,skip_lines,sheet_names)
 rm(xlpath)
 rm(planting_gps_pts)
 rm(clean_planting_gps_pts, create_prj, distill_vals)
-rm(make_geom_list)
-rm(create_lyrs)
 rm(p_gps_pts_cln, prj_out_list, prj_codes)
 
