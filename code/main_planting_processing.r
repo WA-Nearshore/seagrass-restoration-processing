@@ -42,7 +42,8 @@ p_gps_pts0 <- prj_out_list[[2]]
 
 # Create plantings table; add plantingID key to p_gps_pts 
 plantings_out_list<- create_plantings(p_gps_pts0)
-
+p_gps_pts1 <- plantings_out_list[[1]]
+plantings_table <- plantings_out_list[[2]]
 
 
 # Create planting_centroids layer

@@ -16,8 +16,7 @@ clean_planting_gps_pts <- function(planting_gps_pts) {
   
   # remove second planting_geometry column and rename first one
   p_gps_pts_cln <- p_gps_pts_filt %>% 
-    select(-planting_geometry...23) %>%
-    rename("planting_geometry" = "planting_geometry...7")
+    select(-planting_geometry2)
   
   # remove records with NA as planting_location_code 
   p_gps_pts_cln <- p_gps_pts_cln %>% filter(!is.na(planting_location_code))
