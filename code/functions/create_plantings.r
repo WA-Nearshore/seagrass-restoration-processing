@@ -34,6 +34,21 @@ create_plantings <- function(p_gps_pts) {
     group_by(plantingID) %>%
     summarize(planting_geometry = group_process(planting_geometry),
               activity_type = group_process(activity_type),
+              planting_date = group_process(as_date(planting_date)),
+              planting_location_code = group_process(planting_location_code_summ),
+              planting_method = group_process(planting_method_summ),
+              parallel_length_m = group_process(as.numeric(parallel_length_m)),
+              perpendicular_length_m = group_process(as.numeric(perpendicular_length_m)),
+              plot_area_m2 = group_process(as.numeric(plot_area_m2)),
+              planted_area_m2 = group_process(as.numeric(planted_area_m2)),
+              effecive_area_planted_m2 = group_process(as.numeric(effective_area_planted_m2)),
+              number_planting_units = group_process(as.numeric(number_planting_units)),
+              number_shoots = group_process(as.numeric(number_shoots)),
+              plot_shoot_density_m2 = group_process(as.numeric(plot_shoot_density_m2)),
+              planted_area_shoot_density_m2 = group_process(as.numeric(planted_area_density_m2)),
+              donor_site_code = group_process(donor_site_code_summ),
+              subproject_code = group_process(subproject_code)
+    )
               
     
 }

@@ -19,7 +19,14 @@ group_process <- function(indata) {
   n1 <- length(unique(indata_cln))
   if (n1 == 0) {
     print(sprintf("Error: a group is all NA: %d  %d",n0,n1))
-    return(NA)
+    if (is.numeric(indata)) {
+      returnObj <- as.numeric(NA)
+    } else if (is.character(indata)) {
+      returnObj <- as.character(NA) 
+    } else if (is.Date(indata)) {
+      returnObj <- as.Date(NA)
+    }
+    return(returnObj)
   }
   else if (n1 == 1) {
    return(indata_cln[1])
