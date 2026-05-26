@@ -72,10 +72,5 @@ create_plantings <- function(p_gps_pts) {
   # create return list with two objects
   returnObj <- list(p_gps_pts_key, plantings)
   return(returnObj)
-  
-  
-  
-                
-    
 }
   

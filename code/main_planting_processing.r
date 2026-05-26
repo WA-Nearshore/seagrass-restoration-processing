@@ -35,18 +35,36 @@ for (isheet in seq(1,length(matrix_sheets))) {
 # filters to table rows; remove dup col, remove location=NA records
 p_gps_pts_cln <- clean_planting_gps_pts(planting_gps_pts)
 
-# Create projects table by extracting from planting_gps_pts and using keys
+# Create projects table by extracting from planting_gps_pts and adding keys
 prj_out_list <- create_prj(p_gps_pts_cln)
 sub_projects <- prj_out_list[[1]]
 p_gps_pts0 <- prj_out_list[[2]]
+
+##### ADD PROJECT CITATION and perhaps other project attributes
+
 
 # Create plantings table; add plantingID key to p_gps_pts 
 plantings_out_list<- create_plantings(p_gps_pts0)
 p_gps_pts1 <- plantings_out_list[[1]]
 plantings_table <- plantings_out_list[[2]]
 
+##### ADD NOTES TO PLANTINGS TABLE
 
-# Create planting_centroids layer
+# Create spatial layers (pt,ln,poly,centroids)
+# get accounting of missing GPS coordinates
+
+
+# Create planting_locations table & restoration_areas layer
+# INCLUDE LOCATION ATTRIBUTES FROM P_GPS_PTS - historical ref. etc.
+
+
+# Populate planting-relationships:  single, collocated, replicate
+# Populate planting-relationships across time: initial, repeat
+# Populate with/without GPS points
+
+# Create donor site tables
+
+
 
 # Create Online layers with same schema (with graph URLs)
 
