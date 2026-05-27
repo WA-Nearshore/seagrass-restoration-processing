@@ -22,6 +22,7 @@ source("code/functions/get_sheets.r")
 source("code/functions/create_prj.r")
 source("code/functions/clean_planting_gps_pts.r")
 source("code/functions/create_plantings.r")
+source("code/functions/create_lyrs.r")
 source("code/config_Matrix.r")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
@@ -40,18 +41,16 @@ prj_out_list <- create_prj(p_gps_pts_cln)
 sub_projects <- prj_out_list[[1]]
 p_gps_pts0 <- prj_out_list[[2]]
 
-##### ADD PROJECT CITATION and perhaps other project attributes
-
-
 # Create plantings table; add plantingID key to p_gps_pts 
 plantings_out_list<- create_plantings(p_gps_pts0)
 p_gps_pts1 <- plantings_out_list[[1]]
 plantings_table <- plantings_out_list[[2]]
 
-##### ADD NOTES TO PLANTINGS TABLE
+# Create spatial layers (pt,ln,poly,centroids) & freq. of missing GPS coords
+lyrsObj <- create_lyrs(p_gps_pts1)
 
-# Create spatial layers (pt,ln,poly,centroids)
-# get accounting of missing GPS coordinates
+
+
 
 
 # Create planting_locations table & restoration_areas layer
@@ -80,4 +79,5 @@ rm(xlpath)
 rm(planting_gps_pts)
 rm(clean_planting_gps_pts, create_prj, distill_vals)
 rm(p_gps_pts_cln, prj_out_list, prj_codes)
-
+rm(plantings_out_list, create_planting_key, create_plantings)
+rm(group_process, notes_process)

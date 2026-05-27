@@ -2,8 +2,9 @@
 #
 #  create_planting_key()
 #
-#  Function to create planting keys within a version of the planting GPS points
-#  table passed as an argument.
+#  Function to create planting keys within the version of the planting GPS 
+#  points table passed as an argument. This is a foreign key in planting GPS
+#  points and primary key in plantings table.
 #
 #  This function returns a list containing two data frames:
 #    1. p_gps_pts3 - updated version of planting GPS points that now has 

@@ -19,6 +19,7 @@
 library(tidyverse)
 source("code/functions/create_planting_key.r")
 source("code/functions/group_process.r")
+source("code/functions/notes_process.r")
 
 
 create_plantings <- function(p_gps_pts) {
@@ -52,7 +53,8 @@ create_plantings <- function(p_gps_pts) {
         planted_area_shoot_density_m2 = 
           as.numeric(group_process(as.numeric(planted_area_shoot_density_m2))),
         donor_site_code = group_process(donor_site_code_summ),
-        subproj_code = group_process(subproj_code)
+        subproj_code = group_process(subproj_code),
+        notes = notes_process(notes)
     )
 
   # join planting_attr_reduced on to plantings_skeleton
@@ -67,7 +69,7 @@ create_plantings <- function(p_gps_pts) {
            parallel_length_m, perpendicular_length_m, 
            plot_area_m2, planted_area_m2, effective_area_planted_m2,
            number_planting_units, number_shoots,
-           plot_shoot_density_m2, planted_area_shoot_density_m2)
+           plot_shoot_density_m2, planted_area_shoot_density_m2, notes)
  
   # create return list with two objects
   returnObj <- list(p_gps_pts_key, plantings)
