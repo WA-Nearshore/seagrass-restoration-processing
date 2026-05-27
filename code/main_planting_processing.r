@@ -23,7 +23,7 @@ source("code/functions/create_prj.r")
 source("code/functions/clean_planting_gps_pts.r")
 source("code/functions/create_plantings.r")
 source("code/functions/create_lyrs.r")
-source("code/config_Matrix.r")
+source("code/config_Matrix:.r")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
 # Results in data frames in workspace for each sheet listed in config_Matrix.r
@@ -47,6 +47,7 @@ p_gps_pts1 <- plantings_out_list[[1]]
 plantings_table <- plantings_out_list[[2]]
 
 # Create spatial layers (pt,ln,poly,centroids) & freq. of missing GPS coords
+# and other breakdowns for creating a Sankey diagram
 lyrsObj <- create_lyrs(p_gps_pts1)
 
 
