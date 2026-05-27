@@ -20,7 +20,7 @@ create_lyrs <- function(p_gps_pts) {
   ########################################################################## 
   # separate gps records by geometry, and separate spatial from non-spatial
   # plantings (no GPS coords) and do planting accounting of these groups and
-  # test vs large-scale plantings
+  # test vs large-scale plantings. These breakdowns used for Sankey diagram.
   ########################################################################## 
   pt_recs <- p_gps_pts %>% filter(planting_geometry == "point")
   ln_recs <- p_gps_pts %>% filter(planting_geometry == "line")
@@ -90,7 +90,11 @@ create_lyrs <- function(p_gps_pts) {
   # First convert to point features
   # Second assemble points into line and polygon features
   ########################################################################## 
-  
+  pt_spatial_PT <- st_as_sf(pt_recs_cln, coords = c("longitude","latitude"),
+                            crs=4326) 
+  # write geo points to file geodatabase
+  st_write(pt_spatial_PT, dsn="2026_update_Pro_project/2026_update_Pro_project.gdb",
+           layer="planting_gps_pts_geo", driver="OpenFileGDB")
   
   
   

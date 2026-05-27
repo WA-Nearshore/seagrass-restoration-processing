@@ -3,7 +3,7 @@ Planting gps recs,Point gps recs,168
 Planting gps recs,Line gps recs,56
 Planting gps recs,Polygon gps recs,52
 Planting gps recs,Grid gps recs,12
-Point_gps_recs,Point plantings,168
+Point gps recs,Point plantings,168
 Line gps recs,Line plantings,33
 Polygon gps recs,Polygon plantings,14
 Grid gps recs,Grid plantings,12
@@ -22,7 +22,7 @@ Coordinates present,Grid spatial test,8
 Coordinates absent,Point nonspatial test,19
 Coordinates absent,Grid nonspatial test,4
 Point spatial test,Test,148
-Line spatial test ,Test,23
+Line spatial test,Test,23
 Grid spatial test,Test,8
 Point spatial large-scale,Large-scale,1
 Line spatial large-scale,Large-scale,10
