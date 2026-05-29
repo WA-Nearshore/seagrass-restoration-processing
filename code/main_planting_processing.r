@@ -22,6 +22,7 @@ source("code/functions/get_sheets.r")
 source("code/functions/create_prj.r")
 source("code/functions/clean_planting_gps_pts.r")
 source("code/functions/create_plantings.r")
+source("code/functions/create_locations.r")
 source("code/functions/create_lyrs.r")
 source("code/config_Matrix.r")
 
