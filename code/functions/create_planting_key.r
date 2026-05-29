@@ -75,10 +75,10 @@ create_planting_key <- function(p_gps_pts) {
   plantings0 <- p_gps_pts2 %>%
     mutate(date_char = as.character(planting_date)) %>%
     group_by(group_no) %>%
-    summarize(planting_location_code_summ = group_process(planting_location_code),
-              date_char_summ = group_process(date_char),
-              donor_site_code_summ = group_process(donor_site_code),
-              planting_method_summ = group_process(planting_method)) %>%
+    summarize(planting_location_code_summ = group_process_char(planting_location_code),
+              date_char_summ = group_process_char(date_char),
+              donor_site_code_summ = group_process_char(donor_site_code),
+              planting_method_summ = group_process_char(planting_method)) %>%
     ungroup()
   # create initial plantingID key here in planting table, get key counts
   plantings0_key <- plantings0 %>%
