@@ -46,7 +46,7 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
     summarize(n_gps_pts = n())
   # get line plantings with only 1 gps point
   ln_cln_plantings_1gpsPt <- ln_cln_plantings %>% filter(n_gps_pts==1) 
-  # get good line plantings (>1 point) for converstion to spatial line 
+  # get good line plantings (>1 point) for conversion to spatial line 
   ln_recs_cln_not1pt <- ln_recs_cln %>% 
     filter(!(plantingID %in% ln_cln_plantings_1gpsPt$plantingID))
   # get gps records for line plantings with only 1 gps point
@@ -68,7 +68,7 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
   py_recs_cln_not2pts <- py_recs_cln %>%
     filter(!(plantingID %in% py_cln_plantings_2pt$plantingID))
   ln_recs_cln_not1pt_addpy2pt <- rbind(ln_rec_cln_not1pt, py_recs_cln_2pts)
-  # B> if only 3 GPS points, duplicate the 1st GPS record and rbind to make 4 recs
+  # B. if only 3 GPS points, duplicate the 1st GPS record and rbind to make 4 recs
   py_cln_plantings_3pt <- py_cln_plantings %>% filter(n_gps_pts==3)
   repeat_rec <- py_cln_plantings_3pt[1]
   py_recs_good4poly <- rbind(py_recs_not2pts, repeat_rec)
@@ -87,10 +87,10 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
   pt_spatial_PT_geo <- st_as_sf(pt_recs_cln_add, coords = c("longitude","latitude"), crs=4326)
   pt_spatial_PT_StPl <- st_transform(pt_spatial_PT_geo, crs=2927) 
   
-  ln_spatial_PT_geo <- st_as_sf(ln_recs_cln_not1pt, coords = c("longitude","latitude"), crs=4326)
+  ln_spatial_PT_geo <- st_as_sf(ln_recs_cln_not1pt_addpy2pt, coords = c("longitude","latitude"), crs=4326)
   ln_spatial_PT_StPl <- st_transform(ln_spatial_PT_geo, crs=2927)
   
-  py_spatial_PT_geo <- st_as_sf(py_recs_cln, coords = c("longitude","latitude"), crs=4326)
+  py_spatial_PT_geo <- st_as_sf(py_recs_good4poly, coords = c("longitude","latitude"), crs=4326)
   py_spatial_PT_StPl <- st_transform(py_spatial_PT_geo, crs=2927)
   
   gr_spatial_PT_geo <- st_as_sf(grid_recs_cln, coords = c("longitude", "latitude"), crs=4326)
@@ -103,9 +103,10 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
     st_cast("LINESTRING")
   
   # construct polygons
+  py_plantings <- py_spatial_PT_StPl %>%
+    ###################
   
-  
-  # write pt and ln planting spatial features to file geodatabasei
+  # write pt and ln planting spatial features to file geodatabase
   st_write(pt_spatial_PT_StPl, dsn=pathFGDB, layer="pt_plantings", driver="OpenFileGDB")
   st_write(ln_plantings, dsn="2026_update_Pro_project/2026_update_Pro_project.gdb",
            layer="ln_plantings_2pt", driver="OpenFileGDB")
