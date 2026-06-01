@@ -9,7 +9,7 @@
 #
 # May 2026
 #
-#########1#########2#########3#########4#########5#########6#########7#########8
+###############################################################################
 
 library(sf)
 source("code/functions/group_process.r")
@@ -67,11 +67,17 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
     filter(plantingID %in% py_cln_plantings_2pt$plantingID)
   py_recs_cln_not2pts <- py_recs_cln %>%
     filter(!(plantingID %in% py_cln_plantings_2pt$plantingID))
-  ln_recs_cln_not1pt_addpy2pt <- rbind(ln_rec_cln_not1pt, py_recs_cln_2pts)
+  ln_recs_cln_not1pt_addpy2pt <- rbind(ln_recs_cln_not1pt, py_recs_cln_2pts)
   # B. if only 3 GPS points, duplicate the 1st GPS record and rbind to make 4 recs
   py_cln_plantings_3pt <- py_cln_plantings %>% filter(n_gps_pts==3)
-  repeat_rec <- py_cln_plantings_3pt[1]
-  py_recs_good4poly <- rbind(py_recs_not2pts, repeat_rec)
+  
+  # chg following line to filter from gps pt table, not plantings table
+  py_recs_cln_3pts <- py_recs_cln_not2pts %>% 
+    filter(plantingID %in% py_cln_plantings_3pt$plantingID)
+  
+    
+    repeat_rec
+  py_recs_good4poly <- rbind(py_recs_cln_not2pts, repeat_rec)
   
 ### CONFIRM A & B WORKED CORRECTLY - CHANGE NAMES BELOW
   
