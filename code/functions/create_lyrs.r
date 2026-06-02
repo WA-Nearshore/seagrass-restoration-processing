@@ -70,13 +70,13 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
   ln_recs_cln_not1pt_addpy2pt <- rbind(ln_recs_cln_not1pt, py_recs_cln_2pts)
   # B. if only 3 GPS points, duplicate the 1st GPS record and rbind to make 4 recs
   py_cln_plantings_3pt <- py_cln_plantings %>% filter(n_gps_pts==3)
-  
-  # chg following line to filter from gps pt table, not plantings table
   py_recs_cln_3pts <- py_recs_cln_not2pts %>% 
     filter(plantingID %in% py_cln_plantings_3pt$plantingID)
-  
+  py_recs_cln_3pts_addrecs <- py_recs_cln_3pts %>%
+    group_by(plantingID) %>%
+    slice_head(n = 1)
+  py_recs_cln_3ptAdd <-   ####################### 
     
-    repeat_rec
   py_recs_good4poly <- rbind(py_recs_cln_not2pts, repeat_rec)
   
 ### CONFIRM A & B WORKED CORRECTLY - CHANGE NAMES BELOW
