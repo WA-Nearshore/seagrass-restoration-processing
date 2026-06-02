@@ -75,9 +75,8 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
   py_recs_cln_3pts_addrecs <- py_recs_cln_3pts %>%
     group_by(plantingID) %>%
     slice_head(n = 1)
-  py_recs_cln_3ptAdd <-   ####################### 
-    
-  py_recs_good4poly <- rbind(py_recs_cln_not2pts, repeat_rec)
+  py_recs_cln_4pts <- rbind(py_recs_cln_not2pts, py_recs_cln_3pts_addrecs)
+  
   
 ### CONFIRM A & B WORKED CORRECTLY - CHANGE NAMES BELOW
   
