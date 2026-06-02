@@ -78,9 +78,6 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
   py_recs_cln_4pts <- rbind(py_recs_cln_not2pts, py_recs_cln_3pts_addrecs)
   
   
-### CONFIRM A & B WORKED CORRECTLY - CHANGE NAMES BELOW
-  
-  
   
   ########################################################################## 
   # Convert data frames with lat/lon columns into spatial sf objects
@@ -95,7 +92,7 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
   ln_spatial_PT_geo <- st_as_sf(ln_recs_cln_not1pt_addpy2pt, coords = c("longitude","latitude"), crs=4326)
   ln_spatial_PT_StPl <- st_transform(ln_spatial_PT_geo, crs=2927)
   
-  py_spatial_PT_geo <- st_as_sf(py_recs_good4poly, coords = c("longitude","latitude"), crs=4326)
+  py_spatial_PT_geo <- st_as_sf(py_recs_cln_4pts, coords = c("longitude","latitude"), crs=4326)
   py_spatial_PT_StPl <- st_transform(py_spatial_PT_geo, crs=2927)
   
   gr_spatial_PT_geo <- st_as_sf(grid_recs_cln, coords = c("longitude", "latitude"), crs=4326)
@@ -109,72 +106,53 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
   
   # construct polygons
   py_plantings <- py_spatial_PT_StPl %>%
-    ###################
+    group_by(plantingID) %>%
+    summarize(geometry = st_combine(geometry)) %>%
+    st_convex_hull()
+
   
   # write pt and ln planting spatial features to file geodatabase
-  st_write(pt_spatial_PT_StPl, dsn=pathFGDB, layer="pt_plantings", driver="OpenFileGDB")
-  st_write(ln_plantings, dsn="2026_update_Pro_project/2026_update_Pro_project.gdb",
-           layer="ln_plantings_2pt", driver="OpenFileGDB")
-  st_write(py_spatial_PT_StPl, dsn=pathFGDB, layer="py_plantings_PT",
-           driver="OpenFileGDB")
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  #########  following blocks used with console only for Sankey diagram data 
-   
-  # reduce good GPS point records to plantings
-  pt_plantings_cln <- pt_recs_cln %>% group_by(plantingID) %>%
-    summarize(count_pt_plantings=n(), type=group_process(activity_type))
-  ln_plantings_cln <- ln_recs_cln %>% group_by(plantingID) %>%
-    summarize(count_ln_plantings=n(), type=group_process(activity_type))
-  py_plantings_cln <- py_recs_cln %>% group_by(plantingID) %>%
-    summarize(count_py_plantings=n(), type=group_process(activity_type))
-  grid_plantings_cln <- grid_recs_cln %>% group_by(plantingID) %>%
-    summarize(count_grid_plantings=n(), type=group_process(activity_type))
-  
-  # reduce non-spatial GPS records to plantings
-  pt_nonsp_plantings <- pt_nonspatial_planting_recs %>% group_by(plantingID) %>%
-    summarize(count_pt_nonsp_plt=n(), type=group_process(activity_type))
-  ln_nonsp_plantings <- ln_nonspatial_planting_recs %>% group_by(plantingID) %>%
-    summarize(count_ln_nonsp_plt=n(), type=group_process(activity_type))
-  py_nonsp_plantings <- py_nonspatial_planting_recs %>% group_by(plantingID) %>%
-    summarize(count_py_nonsp_plt=n(), type=group_process(activity_type))
-  gr_nonsp_plantings <- grid_nonspatial_planting_recs %>% group_by(plantingID) %>%
-    summarize(count_gr_nonsp_plt=n(), type=group_process(activity_type))
+  st_write(pt_spatial_PT_StPl, dsn=pathFGDB, layer="pt_plantings", 
+           driver="OpenFileGDB", delete_layer=TRUE)
+  st_write(ln_plantings, dsn=pathFGDB, layer="ln_plantings", 
+           driver="OpenFileGDB", delete_layer=TRUE)
+  st_write(py_plantings, dsn=pathFGDB, layer="py_plantings", 
+           driver="OpenFileGDB", delete_layer=TRUE)
+  st_write(gr_spatial_PT_StPl, dsn=pathFGDB, layer="grid_plantings",
+           driver="OpenFileGDB", delete_layer=TRUE)
  
-  # summarize plantings with GPS coords to get test/large_scale breakdown 
-  pt_plantings_cln_summ <- pt_plantings_cln %>% group_by(type) %>% 
-    summarize(plantings_count = n())
-  ln_plantings_cln_summ <- ln_plantings_cln %>% group_by(type) %>%
-    summarize(plantings_count = n())
-  py_plantings_cln_summ <- py_plantings_cln %>% group_by(type) %>%
-    summarize(plantings_count = n())
-  grid_plantings_cln_summ <- grid_plantings_cln %>% group_by(type) %>% 
-    summarize(plantings_count = n())
+  ##########################################################################
+  # check if plantings with no coordinates were at known planting locations
+  ##########################################################################
+  # combine all spatial plantingIDs (known locations)
+  spatialIDs <- data.frame(plantingID = c(pt_spatial_PT_StPl$plantingID,
+                  ln_plantings$plantingID,
+                  py_plantings$plantingID,
+                  gr_spatial_PT_StPl$plantingID))
+  # join planting_location_codes from plantings_table
+  plantings_jn_tbl <- plantings_table %>% select(plantingID, planting_location_code)
+  spatialIDs_jn <- spatialIDs %>% left_join(plantings_jn_tbl, by="plantingID")
+  # get list of unique planting_location_codes for known locations
+  known_plt_loc_codes <- unique(spatialIDs_jn$planting_location_code)
   
-  # summarize no coords plantings to get test/large breakdown
-  pt_nonsp_plt_summ <- pt_nonsp_plantings %>% group_by(type) %>%
-    summarize(plantings_count = n())
-  ln_nonsp_plt_summ <- ln_nonsp_plantings %>% group_by(type) %>%
-    summarize(plantings_count = n())
-  py_nonsp_plt_summ <- py_nonsp_plantings %>% group_by(type) %>%
-    summarize(plantings_count = n())
-  gr_nonsp_plt_summ <- gr_nonsp_plantings %>% group_by(type) %>%
-    summarize(plantings_count = n())
+  # combine all plantingIDs for plantings without GPS coords 
+  no_coord_plantingIDs <- data.frame(
+     plantingID = c(pt_nonspatial_planting_recs$plantingID,
+                    grid_nonspatial_planting_recs$plantingID),
+     planting_location_code = c(pt_nonspatial_planting_recs$planting_location_code_summ,
+                                grid_nonspatial_planting_recs$planting_location_code_summ)
+  )
+  # add variable to indicate whether no-coord planting is at known plt loc code
+  no_coord_plantingIDs <- no_coord_plantingIDs %>%
+    mutate(known_plc = planting_location_code %in% known_plt_loc_codes)
+                              
+  
+  
+  
+  
+  
+  
+  
    
   
   
