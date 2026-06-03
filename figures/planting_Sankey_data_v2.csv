@@ -1,0 +1,13 @@
+﻿Source,Target,Value
+planting GPS records,point GPS recs,168
+planting GPS records,line GPS recs,60
+planting GPS records,poly GPS recs,48
+planting GPS records,grid GPS recs,12
+point GPS recs,point plantings,168
+line GPS recs,line plantings,35
+poly GPS recs,polh plantings,48
+grid GPS recs,grid plantings,12
+point plantings,pt planting w/coords,149
+point plantings,pt planting no coords,19
+grid plantings,grid planting w/coords,8
+grid plantings,grid planting no coords,4
