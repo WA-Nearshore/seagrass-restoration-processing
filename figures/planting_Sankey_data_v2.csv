@@ -5,9 +5,29 @@ planting GPS records,poly GPS recs,48
 planting GPS records,grid GPS recs,12
 point GPS recs,point plantings,168
 line GPS recs,line plantings,35
-poly GPS recs,polh plantings,48
+poly GPS recs,poly plantings,48
 grid GPS recs,grid plantings,12
-point plantings,pt planting w/coords,149
-point plantings,pt planting no coords,19
-grid plantings,grid planting w/coords,8
-grid plantings,grid planting no coords,4
+point plantings,pt planting - coords,149
+point plantings,pt planting - no coords,19
+grid plantings,grid planting - coords,8
+grid plantings,grid planting - no coords,4
+line plantings,ln_plantings_1pt,10
+line plantings,ln_plantings_2pt,25
+poly plantings,poly plantings 2pt,2
+poly plantings,poly plantings 3pt,1
+poly plantings,poly plantings 4pt,9
+pt planting - coords,planting_pt,149
+ln_plantings_1pt,planting_pt,10
+ln_plantings_2pt,planting_ln,25
+poly plantings 2pt,planting_ln,2
+poly plantings 3pt,planting_py,1
+poly plantings 4pt,planting_py,9
+grid planting - coords,planting_gr,8
+planting_pt,plantings-coords,159
+planting_ln,plantings-coords,27
+planting_gr,plantings-coords,8
+pt planting - no coords,plantings-no-coords,19
+grid planting - no coords,plantings-no-coords,4
+plantings-coords,planting location - coords,160
+plantings-no-coords,planting location - coords,5
+plantings-no-coords,planting location - no coords,18
