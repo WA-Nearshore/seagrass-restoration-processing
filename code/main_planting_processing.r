@@ -47,11 +47,15 @@ plantings_out_list<- create_plantings(p_gps_pts0)
 p_gps_pts1 <- plantings_out_list[[1]]
 plantings_table <- plantings_out_list[[2]]
 
-
-# Create spatial layers (pt,ln,poly,centroids) & freq. of missing GPS coords
-# and other breakdowns for creating a Sankey diagram
+# Create planting spatial layers (pt,ln,poly,grid,centroids) & write to file
+# geodatabase - function code used interactively for Sankey diagram data. 
+# Returned list items are all sf spatial objects.
 lyrsObj <- create_lyrs(p_gps_pts1, plantings_table, pathFGDB)
-
+pt_plantings <- lyrsObj[[1]]
+ln_plantings <- lyrsObj[[2]]
+py_plantings <- lyrsObj[[3]]
+grid_plantings <- lyrsObj[[4]]
+planting_centroids <- lyrsObj[[5]]
 
 # Create planting_locations table
 locations_out_list <- create_locations(p_gps_pts1)
@@ -89,4 +93,4 @@ rm(planting_gps_pts)
 rm(clean_planting_gps_pts, create_prj, distill_vals)
 rm(p_gps_pts_cln, prj_out_list, prj_codes)
 rm(plantings_out_list, create_planting_key, create_plantings)
-rm(group_process, notes_process)
+rm(notes_process)

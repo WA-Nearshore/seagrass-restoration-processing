@@ -133,7 +133,7 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
            driver="OpenFileGDB", delete_layer=TRUE)
   st_write(gr_spatial_PT_StPl_sel, dsn=pathFGDB, layer="grid_plantings",
            driver="OpenFileGDB", delete_layer=TRUE)
-  st_write(planting_centroids, dsn-pathFGDB, layer="planting_centroids",
+  st_write(planting_centroids, dsn=pathFGDB, layer="planting_centroids",
            driver="OpenFileGDB", delete_layer=TRUE)
   
   
@@ -141,7 +141,7 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   returnObj <- list(pt_spatial_PT_StPl_sel,
                     ln_plantings,
                     py_plantings,
-                    gr_spatial_PT_STPl_sel,
+                    gr_spatial_PT_StPl_sel,
                     planting_centroids)
   
 }
