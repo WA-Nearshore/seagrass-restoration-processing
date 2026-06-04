@@ -15,7 +15,8 @@ source("code/functions/group_process.r")
 create_locations <- function(p_gps_pts) {
  
   #########################################################################  
-  # Create table to join onto gps pts with categorization of associated
+  # Isolate GPS records where the planting location is associated with
+  Create table and join onto p_gps_pts with categorization of associated
   # planting locations by count of unique sets of gps points. Goal is to isolate
   # gps points where multiple sets associated with planting location.
   #########################################################################  
@@ -38,6 +39,16 @@ create_locations <- function(p_gps_pts) {
   p_gps_pts_jn <- p_gps_pts %>% left_join(loc_code_jn_table,
                                           by = "planting_location_code")
   p_gps_pts_jn_cln <- p_gps_pts_jn %>% drop_na("latitude")
+  # isolate gps point records for planting locations with multiple sets of coords
+  p_gpts_pts_jn_cln_mult <- p_gps_pts_jn_cln %>%
+    filter(gps_category == "multiple_pts")
+  
+  
+  
+  
+  
+  
+  
   
   p_gps_pts_jn_cln_sf_geo <- st_as_sf(p_gps_pts_jn_cln, 
                                       coords = c("longitude", "latitude"), 
