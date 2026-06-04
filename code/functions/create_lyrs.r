@@ -2,10 +2,11 @@
 #
 # create_lyrs()
 #
-# Function to create ArcGIS feature classes in a geodatabase for point, line
-# and polygon plantings, as well as a centroids layer that includes all
+# Function to create ArcGIS feature classes in project geodatabase for point,
+# line and polygon plantings, as well as a centroids layer that includes all
 # plantings, all based on the planting GPS points (p_gps_pts) data frame
-# passed as an argument.
+# passed as an argument. Only plantings with valid GPS coordinates are converted
+# to spatial layers. 
 #
 # May 2026
 #
@@ -15,8 +16,9 @@ library(sf)
 source("code/functions/group_process.r")
 
 
-create_lyrs <- function(p_gps_pts, pathFGDB) {
- 
+create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
+
+   
   ########################################################################## 
   # separate gps records by geometry, and separate records with GPS coords
   # and those without.
@@ -110,55 +112,36 @@ create_lyrs <- function(p_gps_pts, pathFGDB) {
     summarize(geometry = st_combine(geometry)) %>%
     st_convex_hull()
 
+  # select variables for final table for geometries not constructed above
+  pt_spatial_PT_StPl_sel <- pt_spatial_PT_StPl %>% select(plantingID)
+  gr_spatial_PT_StPl_sel <- gr_spatial_PT_StPl %>% select(plantingID)
+  
+  # create initial planting centroids layer
+  ln_centroids <- ln_plantings %>% group_by(plantingID) %>% st_centroid()
+  py_centroids <- py_plantings %>% group_by(plantingID) %>% st_centroid()
+  planting_centroids <- bind_rows(pt_spatial_PT_StPl_sel,
+                                     gr_spatial_PT_StPl_sel,
+                                     ln_centroids,
+                                     py_centroids) 
   
   # write pt and ln planting spatial features to file geodatabase
-  st_write(pt_spatial_PT_StPl, dsn=pathFGDB, layer="pt_plantings", 
+  st_write(pt_spatial_PT_StPl_sel, dsn=pathFGDB, layer="pt_plantings", 
            driver="OpenFileGDB", delete_layer=TRUE)
   st_write(ln_plantings, dsn=pathFGDB, layer="ln_plantings", 
            driver="OpenFileGDB", delete_layer=TRUE)
   st_write(py_plantings, dsn=pathFGDB, layer="py_plantings", 
            driver="OpenFileGDB", delete_layer=TRUE)
-  st_write(gr_spatial_PT_StPl, dsn=pathFGDB, layer="grid_plantings",
+  st_write(gr_spatial_PT_StPl_sel, dsn=pathFGDB, layer="grid_plantings",
            driver="OpenFileGDB", delete_layer=TRUE)
- 
-  ##########################################################################
-  # check if plantings with no coordinates were at known planting locations
-  ##########################################################################
-  # combine all spatial plantingIDs (known locations)
-  spatialIDs <- data.frame(plantingID = c(pt_spatial_PT_StPl$plantingID,
-                  ln_plantings$plantingID,
-                  py_plantings$plantingID,
-                  gr_spatial_PT_StPl$plantingID))
-  # join planting_location_codes from plantings_table
-  plantings_jn_tbl <- plantings_table %>% select(plantingID, planting_location_code)
-  spatialIDs_jn <- spatialIDs %>% left_join(plantings_jn_tbl, by="plantingID")
-  # get list of unique planting_location_codes for known locations
-  known_plt_loc_codes <- unique(spatialIDs_jn$planting_location_code)
-  
-  # combine all plantingIDs for plantings without GPS coords 
-  no_coord_plantingIDs <- data.frame(
-     plantingID = c(pt_nonspatial_planting_recs$plantingID,
-                    grid_nonspatial_planting_recs$plantingID),
-     planting_location_code = c(pt_nonspatial_planting_recs$planting_location_code_summ,
-                                grid_nonspatial_planting_recs$planting_location_code_summ)
-  )
-  # add variable to indicate whether no-coord planting is at known plt loc code
-  no_coord_plantingIDs <- no_coord_plantingIDs %>%
-    mutate(known_plc = planting_location_code %in% known_plt_loc_codes)
-                              
+  st_write(planting_centroids, dsn-pathFGDB, layer="planting_centroids",
+           driver="OpenFileGDB", delete_layer=TRUE)
   
   
-  
-  
-  
-  
-  
-   
-  
-  
-  
-  
-  
-  
+  # create return object with 5 elements (pt,ln,py,grid,centroid)
+  returnObj <- list(pt_spatial_PT_StPl_sel,
+                    ln_plantings,
+                    py_plantings,
+                    gr_spatial_PT_STPl_sel,
+                    planting_centroids)
   
 }

@@ -4,7 +4,7 @@
 library(tidyverse)
 library(networkD3)
 
-df <- read.csv("figures/planting_Sankey_data.csv",stringsAsFactors=FALSE)
+df <- read.csv("figures/planting_Sankey_data_v2.csv",stringsAsFactors=FALSE)
 
 
 # From these flows we need to create a node data frame: it lists every entity 

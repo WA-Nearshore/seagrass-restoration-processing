@@ -50,7 +50,7 @@ plantings_table <- plantings_out_list[[2]]
 
 # Create spatial layers (pt,ln,poly,centroids) & freq. of missing GPS coords
 # and other breakdowns for creating a Sankey diagram
-lyrsObj <- create_lyrs(p_gps_pts1, pathFGDB)
+lyrsObj <- create_lyrs(p_gps_pts1, plantings_table, pathFGDB)
 
 
 # Create planting_locations table
