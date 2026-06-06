@@ -58,17 +58,16 @@ grid_plantings <- lyrsObj[[4]]
 planting_centroids <- lyrsObj[[5]]
 
 # Create planting_locations table
-locations_out_list <- create_locations(p_gps_pts1)
+planting_loc_returnObj <- create_locations(p_gps_pts1, pathFGDB)
+planting_locations <- planting_loc_returnObj[[1]]
+planting_loc_missing_coords <- planting_loc_returnObj[[2]]
+
+
+# add planting points for plantings with no coords, but at location w/coords
 
 
 
-
-
-
-
-# Create planting_locations table & restoration_areas layer
-# INCLUDE LOCATION ATTRIBUTES FROM P_GPS_PTS - historical ref. etc.
-
+# restoration_areas
 
 # Populate planting-relationships:  single, collocated, replicate
 # Populate planting-relationships across time: initial, repeat
@@ -94,3 +93,8 @@ rm(clean_planting_gps_pts, create_prj, distill_vals)
 rm(p_gps_pts_cln, prj_out_list, prj_codes)
 rm(plantings_out_list, create_planting_key, create_plantings)
 rm(notes_process)
+rm(create_lyrs, group_process_char, group_process_date, group_process_numeric)
+rm(lyrsObj)
+rm(p_gps_pts0, pathFGDB)
+rm(create_locations)
+rm(plantings_matrix)
