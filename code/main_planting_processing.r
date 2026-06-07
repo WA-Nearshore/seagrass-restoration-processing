@@ -64,10 +64,13 @@ planting_loc_missing_coords <- planting_loc_returnObj[[2]]
 
 
 # add planting points for plantings with no coords, but at location w/coords
+p_loc_missing_coords_known_loc <- planting_loc_missing_coords %>%
+  mutate(known_loc = planting_location_code %in% planting_locations$planting_location_code)
 
 
+# create restoration_areas
 
-# restoration_areas
+
 
 # Populate planting-relationships:  single, collocated, replicate
 # Populate planting-relationships across time: initial, repeat
