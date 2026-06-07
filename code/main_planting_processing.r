@@ -47,8 +47,7 @@ plantings_out_list<- create_plantings(p_gps_pts0)
 p_gps_pts1 <- plantings_out_list[[1]]
 plantings_table <- plantings_out_list[[2]]
 
-# Create planting spatial layers (pt,ln,poly,grid,centroids) & write to file
-# geodatabase - function code used interactively for Sankey diagram data. 
+# Create planting spatial layers (pt,ln,poly,grid,centroids) & write to fgdb.
 # Returned list items are all sf spatial objects.
 lyrsObj <- create_lyrs(p_gps_pts1, plantings_table, pathFGDB)
 pt_plantings <- lyrsObj[[1]]
@@ -66,6 +65,12 @@ planting_loc_missing_coords <- planting_loc_returnObj[[2]]
 # add planting points for plantings with no coords, but at location w/coords
 p_loc_missing_coords_known_loc <- planting_loc_missing_coords %>%
   mutate(known_loc = planting_location_code %in% planting_locations$planting_location_code)
+
+
+# validate table relationships to this point and create Sankey diagram
+p_sankey <- qa_create_sankey(p_gps_pts1, sub_projects, plantings_table,
+                             pt_plantings, ln_plantings, py_plantings,
+                             grid_plantings, planting_centroids)
 
 
 # create restoration_areas
