@@ -24,6 +24,7 @@ source("code/functions/clean_planting_gps_pts.r")
 source("code/functions/create_plantings.r")
 source("code/functions/create_locations.r")
 source("code/functions/create_lyrs.r")
+source("code/functions/create_sankey.r")
 source("code/config_Matrix_FGDB.r")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
@@ -70,7 +71,8 @@ p_loc_missing_coords_known_loc <- planting_loc_missing_coords %>%
 # validate table relationships to this point and create Sankey diagram
 p_sankey <- qa_create_sankey(p_gps_pts1, sub_projects, plantings_table,
                              pt_plantings, ln_plantings, py_plantings,
-                             grid_plantings, planting_centroids)
+                             grid_plantings, planting_centroids,
+                             planting_locations)
 
 
 # create restoration_areas
