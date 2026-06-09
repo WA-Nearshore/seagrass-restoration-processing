@@ -29,7 +29,8 @@ source("code/functions/group_process.r")
 create_planting_key <- function(p_gps_pts) {
  
   ############################################################################ 
-  # Add grouping variable to p_gps_pts to associate records by planting. 
+  # Add grouping variable to p_gps_pts to associate records by planting,
+  # based on the activity_filter column. 
   ############################################################################ 
   p_gps_pts1 <- p_gps_pts %>% mutate(group_no = -1)
  

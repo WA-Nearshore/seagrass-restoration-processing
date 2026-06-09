@@ -26,10 +26,10 @@ qa_create_sankey <- function (p_gps_pts1, sub_projects, plantings_table,
   
    
   ######################## Level 2
-  L2.1 <- "point planting GPS records"
-  L2.2 <- "line planting GPS records"
-  L2.3 <- "polygon planting GPS records"
-  L2.4 <- "grid planting GPS records"
+  L2.1 <- "pt planting GPS recs"
+  L2.2 <- "ln planting GPS recs"
+  L2.3 <- "py planting GPS recs"
+  L2.4 <- "gr planting GPS recs"
   
   # separate gps records by geometry, and presence of GPS coords 
   pt_recs <- p_gps_pts1 %>% filter(planting_geometry == "point")
@@ -72,23 +72,23 @@ qa_create_sankey <- function (p_gps_pts1, sub_projects, plantings_table,
   
  
   ######################## Level 4
-  L4.1 <- "point plantings with coords"
-  L4.2 <- "point plantings - no coords"
-  L4.3 <- "line plantings 1pt"
-  L4.4 <- "line plantings 2pt"
-  L4.5 <- "polygon plantings 2pt"
-  L4.6 <- "polygon plantings 3pt"
-  L4.7 <- "polygon plantings 4pt"
-  L4.8 <- "grid plantings with coords"
-  L4.9 <- "grid plantings - no coords"
+  L4.1 <- "pt pltings coords"
+  L4.2 <- "pt pltings-no coords"
+  L4.3 <- "ln plantings 1pt"
+  L4.4 <- "ln plantings 2pt"
+  L4.5 <- "poly plantings 2pt"
+  L4.6 <- "poly plantings 3pt"
+  L4.7 <- "poly plantings 4pt"
+  L4.8 <- "gr pltings coords"
+  L4.9 <- "gr pltings-no coords"
   
   L4_source_vect <- c(rep(L3.1, times=2), rep(L3.2, times=2),
                       rep(L3.3, times=3), rep(L3.4, times=2)) 
   
    
-  # Get planting attributes: count gps pts, coord presence 
+  # Get planting attributes: count godd gps pts, coord presence category
   gps_summary_to_plt <- p_gps_pts1 %>% group_by(plantingID) %>%
-    summarize(count_gps_pts=n(), latsumm=group_process_numeric(latitude),
+    summarize(count_gps_pts=sum(!is.na(latitude)), latsumm=group_process_numeric(latitude),
               lonsumm=group_process_numeric(longitude),
               planting_geometry=group_process_char(planting_geometry)) %>%
     mutate(coord_presence = if_else(is.na(latsumm),"missing","good"))
@@ -122,6 +122,47 @@ qa_create_sankey <- function (p_gps_pts1, sub_projects, plantings_table,
   sankey_recs <- data.frame(Source=L4_source_vect, Target=L4_target_vect,
                             Value=L4_value_vect)
   sankey_table <- bind_rows(sankey_table, sankey_recs) 
+  
+  
+  ######################## Level 5
+  #        1........1.........2
+  L5.1 <- "pltings as points"
+  L5.2 <- "pltings as lines"
+  L5.3 <- "pltings as polys"
+  L5.4 <- "pltings as grids"
+  L5.5 <- "pltings no coords"
+  
+  L5_source_vect <- c(L4_target_vect[1], L4_target_vect[3], L4_target_vect[4],
+                      L4_target_vect[5], L4_target_vect[6], L4_target_vect[7],
+                      L4_target_vect[8], L4_target_vect[2], L4_target_vect[9])
+  
+  L5_target_vect <- c(L5.1, L5.1, L5.2, L5.2, L5.3, L5.3, L5.4, L5.5, L5.5)
+  
+  L5_value1 <- L4_value1
+  L5_value2 <- L4_value3
+  L5_value3 <- L4_value4
+  L5_value4 <- L4_value5
+  L5_value5 <- L4_value6
+  L5_value6 <- L4_value7
+  L5_value7 <- L4_value8
+  L5_value8 <- L4_value2
+  L5_value9 <- L4_value9
+  L5_value_vect <- c(L5_value1, L5_value2, L5_value3, L5_value4, L5_value5,
+                     L5_value6, L5_value7, L5_value8, L5_value9)
+  
+  sankey_recs <- data.frame(Source=L5_source_vect, Target=L5_target_vect,
+                            Value=L5_value_vect)
+  sankey_table <- bind_rows(sankey_table, sankey_recs) 
+  
+  
+  ######################## Level 6
+  L6.1 <- "plantings w/coords"
+  L6.2 <- "plantings-no coords" 
+  
+  L6_source_vect <- c(L5.1, L5.2, L5.3, L5.4, L5.5)
+  L6_target_vect <- c(rep(L6.1, times=4), L6.2)
+  
+  
   
   
     

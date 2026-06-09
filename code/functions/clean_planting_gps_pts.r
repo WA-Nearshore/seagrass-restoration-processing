@@ -11,7 +11,7 @@
 clean_planting_gps_pts <- function(planting_gps_pts) {
   
   # remove trailing records not part of table; included in import due to
-  # annotation
+  # annotation; also removes blank records (rows)
   p_gps_pts_filt <- planting_gps_pts %>% filter(!is.na(site_location))
   
   # remove second planting_geometry column and rename first one
