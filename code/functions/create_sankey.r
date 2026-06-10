@@ -162,9 +162,37 @@ qa_create_sankey <- function (p_gps_pts1, sub_projects, plantings_table,
   L6_source_vect <- c(L5.1, L5.2, L5.3, L5.4, L5.5)
   L6_target_vect <- c(rep(L6.1, times=4), L6.2)
   
+  L6_value1 <- L4_value1 + L4_value3
+  L6_value2 <- L4_value4 + L4_value5
+  L6_value3 <- L4_value6 + L4_value7
+  L6_value4 <- L4_value8
+  L6_value5 <- L4_value2 + L4_value9
+  
+  L6_value_vect <- c(L6_value1, L6_value2, L6_value3, L6_value4, L6_value5)
+  
+  sankey_recs <- data.frame(Source=L6_source_vect, Target=L6_target_vect,
+                            Value=L6_value_vect)
+  sankey_table <- bind_rows(sankey_table, sankey_recs) 
   
   
   
-    
+  ######################## Level 7
+  L7.1 <- "plt locations coords"
+  L7.2 <- "plt loc no coords"
+  
+  L7_source_vect <- c(L6.1, L6.2, L6.2)
+  L7_target_vect <- c(L7.1, L7.1, L7.2)
+ 
+  # need code to generate L7 values
+  # planting location with coords / without coords
+  # summarize gps_pts to locations - inventory coords/nocoords
+  # check that w/coord count match planting_locations dimension
+  
+   
+  L7_value1 <- 2
+  
+  
+  
+   
 }
 

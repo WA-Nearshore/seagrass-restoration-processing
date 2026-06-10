@@ -1,0 +1,27 @@
+"","Source","Target","Value"
+"1","planting GPS records","pt planting GPS recs",168
+"2","planting GPS records","ln planting GPS recs",60
+"3","planting GPS records","py planting GPS recs",48
+"4","planting GPS records","gr planting GPS recs",12
+"5","pt planting GPS recs","point plantings",168
+"6","ln planting GPS recs","line plantings",35
+"7","py planting GPS recs","polygon plantings",12
+"8","gr planting GPS recs","grid plantings",12
+"9","point plantings","pt pltings coords",149
+"10","point plantings","pt pltings-no coords",19
+"11","line plantings","ln plantings 1pt",10
+"12","line plantings","ln plantings 2pt",25
+"13","polygon plantings","poly plantings 2pt",2
+"14","polygon plantings","poly plantings 3pt",1
+"15","polygon plantings","poly plantings 4pt",9
+"16","grid plantings","gr pltings coords",8
+"17","grid plantings","gr pltings-no coords",4
+"18","pt pltings coords","pltings as points",149
+"19","ln plantings 1pt","pltings as points",10
+"20","ln plantings 2pt","pltings as lines",25
+"21","poly plantings 2pt","pltings as lines",2
+"22","poly plantings 3pt","pltings as polys",1
+"23","poly plantings 4pt","pltings as polys",9
+"24","gr pltings coords","pltings as grids",8
+"25","pt pltings-no coords","pltings no coords",19
+"26","gr pltings-no coords","pltings no coords",4
