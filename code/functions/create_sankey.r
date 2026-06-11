@@ -1,10 +1,17 @@
 ###############################################################################
 #
-#  qa_create_sankey()
+#  create_sankey()
 #
 #  Check for expected relationships between tables and get summary counts and
 #  use them to create a Sankey diagram showing different groupings of data
 #  entities and attributes.
+#
+#  This function returns a list with
+#    1. Sankey diagram
+#    2. data frame with plantingIDs that have no coords, and therefore were not
+#       added to spatial point layer, but these plantings were at locations with
+#       known coordinates, so they can be added to the spatial points using
+#       planting location info.
 #
 #  June 2026
 #
@@ -14,10 +21,7 @@ library(tidyverse)
 library(networkD3)
 source("code/functions/group_process.r")
 
-qa_create_sankey <- function (p_gps_pts1, sub_projects, plantings_table,
-                              pt_plantings, ln_plantings, py_plantings,
-                              grid_plantings, planting_centroids,
-                              planting_locations) {
+create_sankey <- function (p_gps_pts1, plantings_table, planting_locations) {
   
    
   ######################## Level 1
@@ -90,7 +94,8 @@ qa_create_sankey <- function (p_gps_pts1, sub_projects, plantings_table,
   gps_summary_to_plt <- p_gps_pts1 %>% group_by(plantingID) %>%
     summarize(count_gps_pts=sum(!is.na(latitude)), latsumm=group_process_numeric(latitude),
               lonsumm=group_process_numeric(longitude),
-              planting_geometry=group_process_char(planting_geometry)) %>%
+              planting_geometry=group_process_char(planting_geometry),
+              planting_location_code=group_process_char(planting_location_code)) %>%
     mutate(coord_presence = if_else(is.na(latsumm),"missing","good"))
   
   plt_summary <- gps_summary_to_plt %>% group_by(planting_geometry, 
@@ -183,16 +188,77 @@ qa_create_sankey <- function (p_gps_pts1, sub_projects, plantings_table,
   L7_source_vect <- c(L6.1, L6.2, L6.2)
   L7_target_vect <- c(L7.1, L7.1, L7.2)
  
-  # need code to generate L7 values
-  # planting location with coords / without coords
-  # summarize gps_pts to locations - inventory coords/nocoords
-  # check that w/coord count match planting_locations dimension
   
-   
-  L7_value1 <- 2
+  # rename coord_status from plantings table made earlier to keep statuses straight 
+  plt_coord_status <- gps_summary_to_plt %>%
+    rename(planting_coord_status = coord_presence)
+  
+  # summarize plant location attributes from gps points
+  loc_coord_status <- p_gps_pts1 %>% group_by(planting_location_code) %>%
+    summarize(n_gps_pts = sum(!is.na(latitude)),
+              latsumm = group_process_numeric(latitude),
+              lonsumm = group_process_numeric(longitude)) %>%
+    mutate(location_coord_status = if_else(is.na(latsumm),"missing","good"))
+  # get location freq. by coord status
+  freq_loc_coord_status <- loc_coord_status %>% group_by(location_coord_status) %>%
+    summarize(freq_loc_coord_status = n())
+ 
+  
+     
+  # join location status onto plantings; then split plantings by coord status
+  plt_coord_status_jn <- plt_coord_status %>%
+     left_join(loc_coord_status, by="planting_location_code")
+  plt_coord_status_jn_good <- plt_coord_status_jn %>%
+    filter(planting_coord_status == "good")
+  plt_coord_status_jn_missing <- plt_coord_status_jn %>%
+    filter(planting_coord_status == "missing")
+  
+  # for plantings with missing coords, get location coord status breakdown
+  loc_status_plt_missing <- plt_coord_status_jn_missing %>%
+    group_by(location_coord_status) %>%
+    summarize(freq_plt_missing_by_loc_status = n())
+ 
+  # get plantingIDs for the cases of planting coords missing but location
+  # coords present. These cases need to be added to the spatial point layer
+  rehab_plantingIDs <- plt_coord_status_jn_missing %>% 
+    filter(location_coord_status == "good") %>%
+    select(plantingID, planting_geometry, planting_location_code,)
   
   
+  L7_value1 <- length(unique(plt_coord_status_jn_good$planting_location_code))
+  L7_value2 <- loc_status_plt_missing %>% filter(location_coord_status=="good") %>%
+    pull(freq_plt_missing_by_loc_status)
+  L7_value3 <- loc_status_plt_missing %>% filter(location_coord_status=="missing") %>%
+    pull(freq_plt_missing_by_loc_status)
   
-   
+  L7_value_vect <- c(L7_value1, L7_value2, L7_value3)
+  
+  sankey_recs <- data.frame(Source=L7_source_vect, Target=L7_target_vect,
+                            Value=L7_value_vect)
+  sankey_table <- bind_rows(sankey_table, sankey_recs)
+  
+  ############################################################################
+  # create Sankey diagram
+  ############################################################################
+  links <- sankey_table 
+  nodes <- data.frame(
+    name=c(as.character(links$Source), 
+           as.character(links$Target)) %>% unique()
+  )
+  # With networkD3, connection must be provided using id, not using real name 
+  # like in the links dataframe.. So we need to reformat it.
+  links$IDsource <- match(links$Source, nodes$name)-1 
+  links$IDtarget <- match(links$Target, nodes$name)-1
+
+  # Make the Network
+  p_sankey <- sankeyNetwork(Links = links, Nodes = nodes,
+                     Source = "IDsource", Target = "IDtarget",
+                     Value = "Value", NodeID = "name", 
+                     fontSize=8,
+                     sinksRight=FALSE)
+  
+  # create return list and return
+  returnObj <- list(p_sankey, rehab_plantingIDs)
+  return(returnObj)  
 }
 

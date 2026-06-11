@@ -25,3 +25,11 @@
 "24","gr pltings coords","pltings as grids",8
 "25","pt pltings-no coords","pltings no coords",19
 "26","gr pltings-no coords","pltings no coords",4
+"27","pltings as points","plantings w/coords",159
+"28","pltings as lines","plantings w/coords",27
+"29","pltings as polys","plantings w/coords",10
+"30","pltings as grids","plantings w/coords",8
+"31","pltings no coords","plantings-no coords",23
+"32","plantings w/coords","plt locations coords",160
+"33","plantings-no coords","plt locations coords",5
+"34","plantings-no coords","plt loc no coords",18

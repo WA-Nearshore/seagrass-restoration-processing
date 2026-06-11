@@ -69,10 +69,9 @@ p_loc_missing_coords_known_loc <- planting_loc_missing_coords %>%
 
 
 # validate table relationships to this point and create Sankey diagram
-p_sankey <- qa_create_sankey(p_gps_pts1, sub_projects, plantings_table,
-                             pt_plantings, ln_plantings, py_plantings,
-                             grid_plantings, planting_centroids,
-                             planting_locations)
+sankey_returnObj <- create_sankey(p_gps_pts1, plantings_table, planting_locations)
+p_sankey <- sankey_returnObj[[1]]
+rehab_plantingIDs <- sankey_returnObj[[2]]
 
 
 # create restoration_areas
