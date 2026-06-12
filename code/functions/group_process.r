@@ -18,7 +18,6 @@ group_process_numeric <- function(indata) {
   indata_cln <- na.omit(indata)
   n1 <- length(unique(indata_cln))
   if (n1 == 0) {
-    print(sprintf("Error: a group is all NA: %d  %d",n0,n1))
     return(as.numeric(NA))
   } else if (n1 ==1) {
     return(as.numeric(indata_cln[1]))

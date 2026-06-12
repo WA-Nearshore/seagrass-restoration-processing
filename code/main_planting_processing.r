@@ -25,6 +25,7 @@ source("code/functions/create_plantings.r")
 source("code/functions/create_locations.r")
 source("code/functions/create_lyrs.r")
 source("code/functions/create_sankey.r")
+source("code/functions/rehab_plantings.r")
 source("code/config_Matrix_FGDB.r")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
@@ -46,11 +47,11 @@ p_gps_pts0 <- prj_out_list[[2]]
 # Create plantings table; add plantingID key to p_gps_pts 
 plantings_out_list<- create_plantings(p_gps_pts0)
 p_gps_pts1 <- plantings_out_list[[1]]
-plantings_table <- plantings_out_list[[2]]
+plantings <- plantings_out_list[[2]]
 
 # Create planting spatial layers (pt,ln,poly,grid,centroids) & write to fgdb.
 # Returned list items are all sf spatial objects.
-lyrsObj <- create_lyrs(p_gps_pts1, plantings_table, pathFGDB)
+lyrsObj <- create_lyrs(p_gps_pts1, plantings, pathFGDB)
 pt_plantings <- lyrsObj[[1]]
 ln_plantings <- lyrsObj[[2]]
 py_plantings <- lyrsObj[[3]]
@@ -68,22 +69,26 @@ p_loc_missing_coords_known_loc <- planting_loc_missing_coords %>%
   mutate(known_loc = planting_location_code %in% planting_locations$planting_location_code)
 
 
-# validate table relationships to this point and create Sankey diagram
-sankey_returnObj <- create_sankey(p_gps_pts1, plantings_table, planting_locations)
+# create Sankey diagram summarizing structure in the data; also identify
+# plantingIDs associated with cases w/no planting coords, but planting is
+# associated with a planting_location_code with known coordinates. Using this
+# info these cases can be 'rehabilitated' and added to spatial layers.
+sankey_returnObj <- create_sankey(p_gps_pts1, plantings, planting_locations)
 p_sankey <- sankey_returnObj[[1]]
 rehab_plantingIDs <- sankey_returnObj[[2]]
+
+
+# Add the rehab plantingIDs to the appropriate spatial layers
+rehab_returnObj <- rehab_plantings(rehab_plantingIDs, pt_plantings, ln_plantings,
+                                   py_plantings, grid_plantings,
+                                   planting_centroids, planting_locations)
+
 
 
 # create restoration_areas
 
 
-
-# Populate planting-relationships:  single, collocated, replicate
-# Populate planting-relationships across time: initial, repeat
-# Populate with/without GPS points
-
 # Create donor site tables
-
 
 
 # Create Online layers with same schema (with graph URLs)
