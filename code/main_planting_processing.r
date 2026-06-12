@@ -80,8 +80,8 @@ rehab_plantingIDs <- sankey_returnObj[[2]]
 
 # Add the rehab plantingIDs to the appropriate spatial layers
 rehab_returnObj <- rehab_plantings(rehab_plantingIDs, pt_plantings, ln_plantings,
-                                   py_plantings, grid_plantings,
-                                   planting_centroids, planting_locations)
+                                  py_plantings, grid_plantings,
+                                  planting_centroids, planting_locations)
 
 
 
