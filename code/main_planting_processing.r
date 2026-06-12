@@ -26,6 +26,7 @@ source("code/functions/create_locations.r")
 source("code/functions/create_lyrs.r")
 source("code/functions/create_sankey.r")
 source("code/functions/rehab_plantings.r")
+source("code/functions/create_restoration_areas.r")
 source("code/config_Matrix_FGDB.r")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
@@ -79,13 +80,20 @@ rehab_plantingIDs <- sankey_returnObj[[2]]
 
 
 # Add the rehab plantingIDs to the appropriate spatial layers
-rehab_returnObj <- rehab_plantings(rehab_plantingIDs, pt_plantings, ln_plantings,
-                                  py_plantings, grid_plantings,
-                                  planting_centroids, planting_locations)
+if (dim(rehab_plantingIDs)[1] > 0) {
+  rehab_returnObj <- rehab_plantings(rehab_plantingIDs, pt_plantings, ln_plantings,
+                                    py_plantings, grid_plantings,
+                                    planting_centroids, planting_locations)
+ 
+  pt_plantings2 <- rehab_returnObj[[1]] 
+  ln_plantings2 <- rehab_returnObj[[2]] 
+  py_plantings2 <- rehab_returnObj[[3]] 
+  grid_plantings2 <- rehab_returnObj[[4]] 
+  planting_centroids2 <- rehab_returnObj[[5]] 
+}
 
-
-
-# create restoration_areas
+# Create restoration areas layer
+restoration_areas <- create_restoration_areas(planting_locations, p_gps_pts1)
 
 
 # Create donor site tables
@@ -110,5 +118,5 @@ rm(notes_process)
 rm(create_lyrs, group_process_char, group_process_date, group_process_numeric)
 rm(lyrsObj)
 rm(p_gps_pts0, pathFGDB)
-rm(create_locations)
+rm(create_locations, create_sankey)
 rm(plantings_matrix)

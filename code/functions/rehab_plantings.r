@@ -27,8 +27,8 @@ rehab_plantings <- function(rehab_plantingIDs, pt_plantings, ln_plantings,
                                    py_plantings, grid_plantings,
                                    planting_centroids, planting_locations) {
   
-  # select planting_locations records with plc matching rehab_plantings, and
-  # select columns needed for join table
+  # select planting_locations records with planting_location_code matching 
+  # rehab_plantings, and select columns needed for join table
   plt_loc_sel_rehab <- planting_locations %>% 
     filter(planting_location_code %in% rehab_plantingIDs$planting_location_code) %>%
     select(planting_location_code, geometry)
@@ -38,26 +38,31 @@ rehab_plantings <- function(rehab_plantingIDs, pt_plantings, ln_plantings,
     left_join(plt_loc_sel_rehab, by="planting_location_code") %>%
     select(-planting_location_code)
  
-  # split records by geometry and then drop planting_geometry column
+  # check that data is within limited scope of this function (planting geometry) 
   vect_of_geoms <- unique(rehab_plantIDs_jn_geom$planting_geometry)
   if ((length(vect_of_geoms)!=2) | !("grid" %in% vect_of_geoms) |
       !("point" %in% vect_of_geoms)) {
       print("ERROR - unexpected rehab geometries")
   }
+  # split records by geometry; then drop planting_geometry column; make sf object
   rehab_point_recs <- rehab_plantIDs_jn_geom %>% 
-    filter(planting_geometry == "point")
-  rehab_grid_recs <- reha_plantIDs_jn_geom %>%
-    rilter(plantintg_geometry == "grid")
+    filter(planting_geometry == "point") %>% 
+    select(-planting_geometry) %>%
+    st_as_sf()
+  rehab_grid_recs <- rehab_plantIDs_jn_geom %>%
+    filter(planting_geometry == "grid") %>% 
+    select(-planting_geometry) %>%
+    st_as_sf()
    
-  # construct recrods in spatial feature format with plantingIDs, separate for
-  # each geometry type
-  
-  # bind
+  # bind (append) to existing planting spatial layers
+  pt_plantings <- bind_rows(pt_plantings, rehab_point_recs)
+  grid_plantings <- bind_rows(grid_plantings, rehab_grid_recs)
+  planting_centroids <- bind_rows(planting_centroids, rehab_point_recs,
+                                  rehab_grid_recs)
   
   # return all
-  
-  
-  
-  
+  returnObj <- list(pt_plantings, ln_plantings, py_plantings, grid_plantings,
+                    planting_centroids)
+  return(returnObj)
   
 }

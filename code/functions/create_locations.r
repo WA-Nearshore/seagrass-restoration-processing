@@ -83,7 +83,7 @@ create_locations <- function(p_gps_pts, pathFGDB) {
   ##########################################################################
   plt_loc_attr <- p_gps_pts %>% group_by(planting_location_code) %>%
     summarize(
-       site_vicinity = group_process_char(site_location),
+       restoration_area = group_process_char(site_location),
        historical_presence_source = group_process_char(historical_presence_source),
        water_body = group_process_char(water_body),
        svmp_region = group_process_char(svmp_region),
