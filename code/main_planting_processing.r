@@ -79,7 +79,8 @@ p_sankey <- sankey_returnObj[[1]]
 rehab_plantingIDs <- sankey_returnObj[[2]]
 
 
-# Add the rehab plantingIDs to the appropriate spatial layers
+# Add the rehab plantingIDs to the appropriate spatial layers - initial June
+# 2026 dev only handles point and grid rehab records.
 if (dim(rehab_plantingIDs)[1] > 0) {
   rehab_returnObj <- rehab_plantings(rehab_plantingIDs, pt_plantings, ln_plantings,
                                     py_plantings, grid_plantings,
@@ -93,7 +94,8 @@ if (dim(rehab_plantingIDs)[1] > 0) {
 }
 
 # Create restoration areas layer
-restoration_areas <- create_restoration_areas(planting_locations, p_gps_pts1)
+restoration_areas <- create_restoration_areas(planting_locations, p_gps_pts1,
+                                              pathFGDB)
 
 
 # Create donor site tables
