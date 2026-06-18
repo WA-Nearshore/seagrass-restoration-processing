@@ -41,6 +41,8 @@ create_restoration_areas <- function(planting_locations, p_gps_pts1, pathFGDB) {
    
  land_obstacles <- st_union(baselayer)
  
+ ### Initial hulls successfuly written to fgdb and viewed on map.
+ ### dim(final_hulls) = [0,2] so here is the problem.
  final_hulls <- st_difference(initial_hulls, land_obstacles)
 
  # temp debug 
