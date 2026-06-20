@@ -64,13 +64,7 @@ planting_loc_returnObj <- create_locations(p_gps_pts1, pathFGDB)
 planting_locations <- planting_loc_returnObj[[1]]
 planting_loc_missing_coords <- planting_loc_returnObj[[2]]
 
-
-# add planting points for plantings with no coords, but at location w/coords
-p_loc_missing_coords_known_loc <- planting_loc_missing_coords %>%
-  mutate(known_loc = planting_location_code %in% planting_locations$planting_location_code)
-
-
-# create Sankey diagram summarizing structure in the data; also identify
+# Create Sankey diagram summarizing structure in the data; also identify
 # plantingIDs associated with cases w/no planting coords, but planting is
 # associated with a planting_location_code with known coordinates. Using this
 # info these cases can be 'rehabilitated' and added to spatial layers.
@@ -79,13 +73,12 @@ p_sankey <- sankey_returnObj[[1]]
 rehab_plantingIDs <- sankey_returnObj[[2]]
 
 
-# Add the rehab plantingIDs to the appropriate spatial layers - initial June
+# Add the rehab plantingIDs to the appropriate spatial layers. Initial June
 # 2026 dev only handles point and grid rehab records.
 if (dim(rehab_plantingIDs)[1] > 0) {
   rehab_returnObj <- rehab_plantings(rehab_plantingIDs, pt_plantings, ln_plantings,
                                     py_plantings, grid_plantings,
                                     planting_centroids, planting_locations)
- 
   pt_plantings2 <- rehab_returnObj[[1]] 
   ln_plantings2 <- rehab_returnObj[[2]] 
   py_plantings2 <- rehab_returnObj[[3]] 
@@ -93,9 +86,12 @@ if (dim(rehab_plantingIDs)[1] > 0) {
   planting_centroids2 <- rehab_returnObj[[5]] 
 }
 
-# Create restoration areas layer
-restoration_areas <- create_restoration_areas(planting_locations, p_gps_pts1,
-                                              pathFGDB)
+# Create restoration areas layer and add shared key restoration_area_code to
+# planting_locations and write both to fgdb
+restoration_returnObj <- create_restoration_areas(planting_locations, p_gps_pts1,
+                                                  pathFGDB)
+restoration_areas <- restoration_returnObj[[1]]
+planting_locations <- restoration_returnObj[[2]]
 
 
 # Create donor site tables

@@ -4,7 +4,7 @@
 #
 # Creates polygon sf object with restoration areas.
 # The file geodatabase that the argument pathFGDB points to must have a
-# polygon layer of land areas names 'baselayer'.
+# polygon layer of land areas named 'baselayer'.
 #
 ###############################################################################
 
@@ -13,13 +13,10 @@ library(sf)
 
 create_restoration_areas <- function(planting_locations, p_gps_pts1, pathFGDB) {
  
- # buffer dimension for point buffers that are grouped for convex hull areas
- # dimensions follow EPSG 2927 so are in US Survey feet
+ # Buffer dimension for point buffers that are grouped for convex hull areas.
+ # Dimensions follow EPSG 2927 so are in US Survey feet.
  buffer_dimension <- 1500
    
- # get list of restoration areas from planting_locations
- restoration_area_names <- unique(planting_locations$restoration_area)
-  
  # make gps pts into sf object and project from WGS84 lat/lon to State Plane.
  p_gps_pts_sf <- p_gps_pts1 %>% 
     select(site_location, latitude, longitude) %>%
@@ -28,7 +25,7 @@ create_restoration_areas <- function(planting_locations, p_gps_pts1, pathFGDB) {
     st_transform(crs=2927)
  
  # read in 'baselayer' from FGDB with land polygons; project to StPl Wash S
- baselayer <- st_read(dsn = pathFGDB, layer = "baselayer") %>%
+ baselayer <- st_read(dsn = pathFGDB, layer = "baselayer_Clip") %>%
    st_transform(crs=2927)
  
  # make convex hulls around grouped point buffers 
@@ -41,21 +38,27 @@ create_restoration_areas <- function(planting_locations, p_gps_pts1, pathFGDB) {
    
  land_obstacles <- st_union(baselayer)
  
- ### Initial hulls successfuly written to fgdb and viewed on map.
- ### dim(final_hulls) = [0,2] so here is the problem.
- final_hulls <- st_difference(initial_hulls, land_obstacles)
+ # Create water-only hulls by substracting land areas. This produces both
+ # polygon and multipolygon features. Cast all to multipolygon.
+ water_hulls <- st_difference(initial_hulls, land_obstacles)
+ final_hulls <- st_cast(water_hulls, "MULTIPOLYGON")
+ 
+ # Create restoration_area_code to serve as table key (no spaces), in both
+ # planting_locations and in final_hulls.
+ planting_locations <- planting_locations %>%
+   mutate(restoration_area_code = str_replace_all(restoration_area," ","_")) %>%
+   select(-restoration_area)
+ restoration_areas <- final_hulls %>%
+   mutate(restoration_area_code = str_replace_all(restoration_area," ","_"))
 
- # temp debug 
- st_write(p_gps_pts_sf, dsn=pathFGDB, layer="p_gps_pts_sf_test",
-           driver="OpenFileGDB", delete_layer=TRUE)
- st_write(initial_hulls, dsn=pathFGDB, layer="initial_hulls",
-           driver="OpenFileGDB", delete_layer=TRUE)
- 
- 
- # write out to project file geodatabase
- st_write(initial_hulls, dsn=pathFGDB, layer="init_restoration_areas",
-           driver="OpenFileGDB", delete_layer=TRUE)
- # previsou write executed w/out error but not seen within fgdb from Pro.
   
+ # write out to project file geodatabase
+ st_write(restoration_areas, dsn=pathFGDB, layer="restoration_areas",
+           driver="OpenFileGDB", delete_layer=TRUE)
+ st_write(planting_locations, dsn=pathFGDB, layer="planting_locations",
+          driver="OpenFileGDB", delete_layer=TRUE)
+
+ returnObj <- list(restoration_areas, planting_locations)
+ return(returnObj) 
 }
 

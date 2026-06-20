@@ -92,12 +92,6 @@ create_locations <- function(p_gps_pts, pathFGDB) {
   planting_locations <- planting_location_start %>%
     left_join(plt_loc_attr, by="planting_location_code")
   
-  
-  
-  # write planting_locations point spatial layer to fgdb
-  st_write(planting_locations, dsn=pathFGDB, layer="planting_locations",
-           driver="OpenFileGDB", delete_layer=TRUE)
-  
   # return list with planting_locations table and platnings with missing coords
   returnObj <- list(planting_locations, planting_loc_missing_coords)
   return(returnObj) 
