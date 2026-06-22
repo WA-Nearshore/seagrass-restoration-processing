@@ -8,9 +8,14 @@
 #  Elements of this program:
 #    1. read sources tables from Matrix Excel spreadsheet.
 #    2. conduct basic cleanup and QA
-#    3. extract projects attributes and create a subprojects table
-#    4. extract planting attributes and create a plantings table
-#    5.
+#    3. extract projects attributes, create a subprojects table, add subproject
+#       key to p_gps_pts
+#    4. extract planting attributes, create a plantings table, add plantingID
+#       as key to p_gps_pts
+#    5. create 5 spatial layers and write them to fgdb: point, line, polygon
+#       and grid plantings with their respective planting subsets, and a
+#       planting centroids layers that includes all plantings.
+#    6. create a planting locations point layer
 #
 #
 #  May 2026
@@ -27,6 +32,7 @@ source("code/functions/create_lyrs.r")
 source("code/functions/create_sankey.r")
 source("code/functions/rehab_plantings.r")
 source("code/functions/create_restoration_areas.r")
+source("code/functions/create_donor_tbls.r")
 source("code/config_Matrix_FGDB.r")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
@@ -59,7 +65,9 @@ py_plantings <- lyrsObj[[3]]
 grid_plantings <- lyrsObj[[4]]
 planting_centroids <- lyrsObj[[5]]
 
-# Create planting_locations table
+# Create planting_locations point sf object and write missing coord cases 
+# to csv. Planting locations points also written to fgdb.
+# TABLE SHOULD BE WRITTEN TO FGDB
 planting_loc_returnObj <- create_locations(p_gps_pts1, pathFGDB)
 planting_locations <- planting_loc_returnObj[[1]]
 planting_loc_missing_coords <- planting_loc_returnObj[[2]]
@@ -79,11 +87,11 @@ if (dim(rehab_plantingIDs)[1] > 0) {
   rehab_returnObj <- rehab_plantings(rehab_plantingIDs, pt_plantings, ln_plantings,
                                     py_plantings, grid_plantings,
                                     planting_centroids, planting_locations)
-  pt_plantings2 <- rehab_returnObj[[1]] 
-  ln_plantings2 <- rehab_returnObj[[2]] 
-  py_plantings2 <- rehab_returnObj[[3]] 
-  grid_plantings2 <- rehab_returnObj[[4]] 
-  planting_centroids2 <- rehab_returnObj[[5]] 
+  pt_plantings_rehab <- rehab_returnObj[[1]] 
+  ln_plantings_rehab <- rehab_returnObj[[2]] 
+  py_plantings_rehab <- rehab_returnObj[[3]] 
+  grid_plantings_rehab <- rehab_returnObj[[4]] 
+  planting_centroids_rehab <- rehab_returnObj[[5]] 
 }
 
 # Create restoration areas layer and add shared key restoration_area_code to
@@ -95,7 +103,11 @@ planting_locations <- restoration_returnObj[[2]]
 
 
 # Create donor site tables
+donorObj <- create_donor_tbls(donor_sites)
 
+# Create monitoring data table
+
+# Create monitoring graphs
 
 # Create Online layers with same schema (with graph URLs)
 
@@ -118,3 +130,5 @@ rm(lyrsObj)
 rm(p_gps_pts0, pathFGDB)
 rm(create_locations, create_sankey)
 rm(plantings_matrix)
+rm(create_restoration_areas)
+rm(sankey_returnObj, rehab_returnObj)

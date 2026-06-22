@@ -33,8 +33,7 @@ distill_vals <- function(in_values) {
   
 
 ##########################################################################
-# main function in this file, create_prj()
-##########################################################################
+
 create_prj <- function(p_gps_pts_cln) {
   
   # edit records with NA in project name, funding_source, contractor fields

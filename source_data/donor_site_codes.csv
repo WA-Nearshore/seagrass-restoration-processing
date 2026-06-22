@@ -1,27 +1,25 @@
-﻿donor_site_name,donor_site_code
-Anderson Island,AND
-Bell Point,BPT
-Creosote Point,CPT
-Cutts Island,CTI
-Dumas Bay,DMB
-DuPont Wharf,DPW
-Fay Bainbridge,FYB
-Freshwater Bay,FWB
-Green Point,GPT
-Henry Island,HRI
-Ketron Island,KTI
-Mitchell Bay,MTB
-PNNL - MSL Tanks,PNT
-Point Julia,PTJ
-Quilcene Bay,QLB
-Rocky Bay,RKB
-Rocky Point,RPT
-Sandy Hook,SNH
-Sandy Point,SPT
-Shine Beach,SHB
-Ship Harbor,SHH
-Skagit Bay,SKB
-Stuart Island,STI
-Thompson Cove,THC
-Windy Bluff,WNB
-Mixed,Mix
+﻿donor_site_name,alt_donor_site_name,donor_site_code
+Bell Point,,BPT
+Creosote Point,,CPT
+Cutts Island,Cutts Island sand spit,CTI
+Dumas Bay,,DMB
+DuPont Wharf,,DPW
+Fay Bainbridge,,FYB
+Freshwater Bay,,FWB
+Green Point,,GPT
+Henry Island,,HRI
+Ketron Island,Ketron Island NW,KTI
+Mitchell Bay,,MTB
+PNNL - MSL Tanks,,PNT
+Point Julia,,PTJ
+Quilcene Bay,,QLB
+Rocky Bay,,RKB
+Rocky Point,,RPT
+Sandy Hook,,SNH
+Sandy Point,,SPT
+Shine Beach,,SHB
+Ship Harbor,,SHH
+Skagit Bay,,SKB
+Stuart Island,,STI
+Thompson Cove,Anderson Island,THC
+Windy Bluff,,WNB
