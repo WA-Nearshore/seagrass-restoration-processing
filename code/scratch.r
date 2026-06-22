@@ -29,3 +29,25 @@ anderson_p_gps_pts_sel <- anderson_p_gps_pts %>%
   select(site_location, site_name, year, activity_type, planting_date,
          donor_site_name, subproj_code)
 
+
+
+# isolate gps_pts donor site list and donor_sites sheet site list
+gps_pts_donor_sites <- data.frame(
+  donor_site_names = unique(p_gps_pts1$donor_site_name)
+)
+donor_site_sheet_sites <- data.frame(
+  donor_site_names = unique(donor_sites$site_name)
+)
+write.csv(gps_pts_donor_sites, file="output_tables/gps_pts_donor_sites.csv")
+write.csv(donor_site_sheet_sites, file="output_tables/donor_site_sheet_sites.csv")
+
+
+
+
+
+
+
+
+
+
+
