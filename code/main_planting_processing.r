@@ -103,7 +103,7 @@ planting_locations <- restoration_returnObj[[2]]
 
 
 # Create donor site tables
-donorObj <- create_donor_tbls(donor_sites)
+donorObj <- create_donor_tbls(p_gps_pts1, donor_sites)
 
 # Create monitoring data table
 
