@@ -26,7 +26,7 @@ anderson_p_gps_pts <- p_gps_pts1 %>%
          donor_site_name == "Sandy Point" |
          donor_site_name == "Thompson Cove")
 anderson_p_gps_pts_sel <- anderson_p_gps_pts %>%
-  select(site_location, site_name, year, activity_type, planting_date,
+  select(site_name, activity_type, planting_date,
          donor_site_name, subproj_code)
 
 
