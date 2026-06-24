@@ -3,8 +3,9 @@
 # create_donor_tbls()
 #
 # Create planting_donor_usage table and donor_sites point layer given
-# the donor_sites sheet from the Matrix snapshot as an argument and a table 
-# of donor site codes read in from csv in this function.
+# the donor_sites sheet and the Plantings sheet (p_gps_pts1) from the Matrix 
+# snapshot as an argument and a table of donor site codes read in from csv 
+# in this function.
 #
 # June 2026
 #
@@ -14,8 +15,7 @@ library(tidyverse)
 
 create_donor_tbls <- function(p_gps_pts1, donor_sites) {
  
-  # read table of donor site codes and prep for relating to donor site tbl
-  # from matrix snapshot
+  # read table of donor site codes
   donor_site_codes <- read.csv("source_data/donor_site_codes.csv",
                                stringsAsFactors=FALSE)
 
@@ -30,40 +30,61 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites) {
               donor_site_name_summ = group_process_char(donor_site_name),
               donor_site_code_summ2 = group_process_char(donor_site_code_summ))
   
-  # isolate simple 1-to-1 planting-donor cases and start usage table
-  simple_donor_cases <- planting_summ %>%
+  # isolate simple 1-to-1 planting-donor cases and make records for usage table
+  simple_usage_recs <- planting_summ %>%
     filter(donor_site_code_summ2 != "Mix") %>%
     select(plantingID, donor_site_code_summ2) %>%
     rename(donor_site_code = donor_site_code_summ2)
   
-  # isolate 2 classes of Mix cases - coded as 'Mixed' in field and combined
-  # list of donor site names, e.g. Thompson Cove, Dupont Wharf.
+  # isolate 2 classes of Mix cases - coded as 'Mixed' in field and coded as a
+  # list of donor site names, e.g. "Thompson Cove, Dupont Wharf".
   mix_donor_cases <- planting_summ %>%
     filter(donor_site_code_summ2 == "Mix")
   field_mix_cases <- mix_donor_cases %>% filter(donor_site_name_summ == "Mixed")
   field_list_cases <- mix_donor_cases %>% filter(donor_site_name_summ != "Mixed")
   
-  # process field mix cases to initial donor usage records
+  # process field mix cases to make donor usage records
+  # First make empty data frame for appending planting_donor_usage records
+  field_mix_usage_recs <- simple_usage_recs %>% slice(0)
   for (irec in 1:nrow(field_mix_cases)) {
-    shared_donor_recs <- planting_summ %>%
+    shared_donor_planting_recs <- planting_summ %>%
       filter(planting_date == field_mix_cases$planting_date[irec],
              planting_location_code == field_mix_cases$planting_location_code[irec])
-    donor_list <- shared_donor_recs %>%
+    donor_list <- shared_donor_planting_recs %>%
       filter(donor_site_name_summ != "Mixed") %>%
       pull(donor_site_code_summ2)
-    
-    
-    
-    
-    
+    irec_usage_tbl_recs <- data.frame(
+      plantingID = rep(field_mix_cases$plantingID[irec], times=length(donor_list)),
+      donor_site_code = donor_list
+    )
+    field_mix_usage_recs <- rbind(field_mix_usage_recs, irec_usage_tbl_recs)
+  }
+  
+  # process field list cases to make donor usage records
+  field_list_usage_recs <- simple_usage_recs %>% slice(0)  
+  for (irec in 1:nrow(field_list_cases)) {
+    if (str_detect(field_list_cases$donor_site_name_summ[irec], " and ")) {
+      # process 'and' delimited list
+      
+      
+    } else if (str_detect(field_list_cases$donor_site_name_summ[irec],"/")) {
+      # process slash delimined list 
+      
+      
+    } else if (str_detect(field_list_cases$donor_site_name_summ[irec], ",\\s*")) {
+      # process comma delimited list 
+      
+      
+    }
+    field_list_usage_recs <- rbind(field_list_usage_recs, irec_usage_tbl_recs)
     
     
   }
-  
-      
 
   
   
    
   return(1) 
 }
+
+
