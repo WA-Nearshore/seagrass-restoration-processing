@@ -19,6 +19,10 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites) {
   donor_site_codes <- read.csv("source_data/donor_site_codes.csv",
                                stringsAsFactors=FALSE)
 
+  
+  ########################################################################
+  # create donor usage table
+  ########################################################################
   # summarize GPS points down to plantings
   p_gps_pts1_sel <- p_gps_pts1 %>%
     select(planting_location_code, planting_date, donor_site_name, alt_donor_site_name,
@@ -63,28 +67,57 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites) {
   # process field list cases to make donor usage records
   field_list_usage_recs <- simple_usage_recs %>% slice(0)  
   for (irec in 1:nrow(field_list_cases)) {
+    
     if (str_detect(field_list_cases$donor_site_name_summ[irec], " and ")) {
       # process 'and' delimited list
-      
+      donor_name_vect <- str_split_1(field_list_cases$donor_site_name_summ[irec], " and ")
+      irec_usage_tbl_recs <- data.frame(
+        plantingID = c(rep(field_list_cases$plantingID[irec], times=length(donor_name_vect))),
+        donor_site_code = donor_name_vect
+      )
+      field_list_usage_recs <- rbind(field_list_usage_recs, irec_usage_tbl_recs)
       
     } else if (str_detect(field_list_cases$donor_site_name_summ[irec],"/")) {
-      # process slash delimined list 
-      
+      # process slash delimited list 
+      donor_name_vect <- str_split_1(field_list_cases$donor_site_name_summ[irec], "/")
+      irec_usage_tbl_recs <- data.frame(
+        plantingID = c(rep(field_list_cases$plantingID[irec], times=length(donor_name_vect))),
+        donor_site_code = donor_name_vect
+      )
+      field_list_usage_recs <- rbind(field_list_usage_recs, irec_usage_tbl_recs)
       
     } else if (str_detect(field_list_cases$donor_site_name_summ[irec], ",\\s*")) {
       # process comma delimited list 
+      donor_name_vect <- str_split_1(field_list_cases$donor_site_name_summ[irec], ", ")
+      irec_usage_tbl_recs <- data.frame(
+        plantingID = c(rep(field_list_cases$plantingID[irec], times=length(donor_name_vect))),
+        donor_site_code = donor_name_vect
+      )
+      field_list_usage_recs <- rbind(field_list_usage_recs, irec_usage_tbl_recs)
       
-      
+    } else {
+      print("Error with processing donor field list cases.")
     }
-    field_list_usage_recs <- rbind(field_list_usage_recs, irec_usage_tbl_recs)
-    
-    
-  }
+  }  # close for loop through field list cases
 
+  # combine records to make donor usage table
+  donor_usage <- rbind(simple_usage_recs, field_mix_usage_recs, 
+                       field_list_usage_recs)
+  
+  
+  ########################################################################
+  # create donor site table 
+  ########################################################################
+ 
+  
+  
+  
+  
   
   
    
-  return(1) 
+  returnObj <- list(donor_usage) 
+  return(returnObj) 
 }
 
 
