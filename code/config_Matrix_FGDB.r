@@ -13,7 +13,7 @@
 xlpath <- 'source_data/Eelgrass_Restoration_Matrix_snapshot_20260623.xlsx'
 
 # Excel sheets to import and process 
-sheet_names <- c("Planting GPS Points", "Plantings", "Donor Sites")
+sheet_names <- c("Planting", "lookup table", "Donor Sites")
 new_sheet_names <- c("planting_gps_pts", "plantings_matrix", "donor_sites")
 skip_lines <- c(2,0,1)
 

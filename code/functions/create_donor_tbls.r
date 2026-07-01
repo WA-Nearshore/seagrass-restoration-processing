@@ -108,9 +108,11 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites) {
   ########################################################################
   # create donor site table 
   ########################################################################
- 
+  donor_sites_cnt <- donor_sites %>%
+    group_by(site_name) %>%
+    mutate(donor_site_coord_count = n())
   
-  
+  # isolate donor sites with multiple sets of coords, get centroid
   
   
   

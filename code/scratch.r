@@ -43,7 +43,9 @@ write.csv(donor_site_sheet_sites, file="output_tables/donor_site_sheet_sites.csv
 
 
 
-
+# count cases of gps records with donor site Anderson Island
+p_gps_pts_AND <- p_gps_pts1 %>%
+  filter(donor_site_name == "Anderson Island")
 
 
 

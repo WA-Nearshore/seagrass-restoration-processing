@@ -67,7 +67,6 @@ planting_centroids <- lyrsObj[[5]]
 
 # Create planting_locations point sf object and write missing coord cases 
 # to csv. Planting locations points also written to fgdb.
-# TABLE SHOULD BE WRITTEN TO FGDB
 planting_loc_returnObj <- create_locations(p_gps_pts1, pathFGDB)
 planting_locations <- planting_loc_returnObj[[1]]
 planting_loc_missing_coords <- planting_loc_returnObj[[2]]
