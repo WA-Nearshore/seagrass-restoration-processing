@@ -10,7 +10,7 @@
 
 
 # path to source Excel file - e.g. a snapshot of the Matrix spreadsheet
-xlpath <- 'source_data/Eelgrass_Restoration_Matrix_snapshot_20260518.xlsx'
+xlpath <- 'source_data/Eelgrass_Restoration_Matrix_snapshot_20260623.xlsx'
 
 # Excel sheets to import and process 
 sheet_names <- c("Planting GPS Points", "Plantings", "Donor Sites")
