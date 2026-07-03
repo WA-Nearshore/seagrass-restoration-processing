@@ -123,7 +123,7 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites) {
   
   # convert to sf object and project to State Plane WA South Harn
   donor_site_pts_geo <- st_as_sf(donor_sites_cnt, coords = c("long","lat"),
-                                 crs=4326)
+                                 crs=4326, remove=FALSE)
   donor_site_pts_StPl <- st_transform(donor_site_pts_geo, crs=2927) 
   
   # isolate donor sites with multiple sets of coords, get centroid
@@ -139,13 +139,10 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites) {
   
   # isolate donor sites with a single set of coords; process to final set of cols 
   donor_site_singlePts <- donor_site_pts_StPl %>%
-    filter(donor_site_coord_count ==1)  
-  donor_site_coord_join_tbl <- donor_sites_cnt %>%
-    select(donor_site_code, lat, long)
-  donor_site_singlePts_jn <- donor_site_singlePts %>%
-    left_join(donor_site_coord_join_tbl, by="donor_site_code") %>%
+    filter(donor_site_coord_count ==1) %>%
     select(-datum, -donor_site_coord_count)
  
+  
   # combine single and multiple coord cases to make donor site point layer 
   donor_site_pt_layer <- rbind(donor_site_singlePts_jn, 
                                donor_site_multiPt_centroids_jn)
@@ -156,16 +153,25 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites) {
   ########################################################################
   donor_collection_pts <- donor_site_pts_StPl %>%
        filter(donor_site_coord_count > 1) %>%
-       select(donor_site_name, notes)
+       select(donor_site_code, lat, long, notes)
   
   
   
   
-  
-  
+  ########################################################################
+  # write sf layers to fgdb 
+  ########################################################################
+ # donor_collection_pts, donor_site_pt_layer, donor_site_usage (table??) 
+ st_write(donor_site_usage, dsn=pathFGDB, layer="donor_site_usage", 
+           driver="OpenFileGDB", delete_layer=TRUE)
+ st_write(donor_site_pt_layer, dsn=pathFGDB, layer="donor_sites", 
+           driver="OpenFileGDB", delete_layer=TRUE)
+ st_write(donor_collection_pts, dsn=pathFGDB, layer="donor_collection_pts", 
+           driver="OpenFileGDB", delete_layer=TRUE)
   
    
-  returnObj <- list(donor_site_usage) 
+  returnObj <- list(donor_site_usage, donor_site_pt_layer,
+                    donor_collection_pts) 
   return(returnObj) 
 }
 
