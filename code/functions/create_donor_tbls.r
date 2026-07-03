@@ -2,16 +2,21 @@
 #
 # create_donor_tbls()
 #
-# Create planting_donor_usage table and donor_sites point layer given
-# the donor_sites sheet and the Plantings sheet (p_gps_pts1) from the Matrix 
-# snapshot as an argument and a table of donor site codes read in from csv 
-# in this function.
+# Create 3 objects related to donor sites:
+#   1. donor_site_usage table
+#   2. donor_sites point layer 
+#   3. donor_collection_pts point layer
+#
+# Input data arguments are the donor_sites sheet and the Plantings sheet 
+# (p_gps_pts1) from the Matrix snapshot as an argument. Input data includes
+# a table of donor site codes read in from csv in this function.
 #
 # June 2026
 #
 ###############################################################################
 
 library(tidyverse)
+library(sf)
 
 create_donor_tbls <- function(p_gps_pts1, donor_sites) {
  
@@ -101,24 +106,66 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites) {
   }  # close for loop through field list cases
 
   # combine records to make donor usage table
-  donor_usage <- rbind(simple_usage_recs, field_mix_usage_recs, 
+  donor_site_usage <- rbind(simple_usage_recs, field_mix_usage_recs, 
                        field_list_usage_recs)
   
   
   ########################################################################
-  # create donor site table 
+  # create donor site point feature class
   ########################################################################
   donor_sites_cnt <- donor_sites %>%
     group_by(site_name) %>%
-    mutate(donor_site_coord_count = n())
+    mutate(donor_site_coord_count = n()) %>%
+    ungroup() %>%
+    rename(donor_site_name = site_name) %>%
+    left_join(donor_site_codes, by="donor_site_name") %>%
+    select(-Location, -data_type, -alt_donor_site_name)
+  
+  # convert to sf object and project to State Plane WA South Harn
+  donor_site_pts_geo <- st_as_sf(donor_sites_cnt, coords = c("long","lat"),
+                                 crs=4326)
+  donor_site_pts_StPl <- st_transform(donor_site_pts_geo, crs=2927) 
   
   # isolate donor sites with multiple sets of coords, get centroid
+  donor_site_multiPt_centroids <- donor_site_pts_StPl %>% 
+          filter(donor_site_coord_count > 1) %>%
+          group_by(donor_site_name) %>%
+          summarize(geometry = st_union(geometry)) %>%
+          st_centroid()
+  # process to final set of cols
+  donor_site_multiPt_centroids_jn <- donor_site_multiPt_centroids %>%
+    left_join(donor_sites_cnt, by="donor_site_name", multiple="first") %>%
+    select(-datum, -donor_site_coord_count)
+  
+  # isolate donor sites with a single set of coords; process to final set of cols 
+  donor_site_singlePts <- donor_site_pts_StPl %>%
+    filter(donor_site_coord_count ==1)  
+  donor_site_coord_join_tbl <- donor_sites_cnt %>%
+    select(donor_site_code, lat, long)
+  donor_site_singlePts_jn <- donor_site_singlePts %>%
+    left_join(donor_site_coord_join_tbl, by="donor_site_code") %>%
+    select(-datum, -donor_site_coord_count)
+ 
+  # combine single and multiple coord cases to make donor site point layer 
+  donor_site_pt_layer <- rbind(donor_site_singlePts_jn, 
+                               donor_site_multiPt_centroids_jn)
+  
+  
+  ########################################################################
+  # create donor_collection_pts point feature class 
+  ########################################################################
+  donor_collection_pts <- donor_site_pts_StPl %>%
+       filter(donor_site_coord_count > 1) %>%
+       select(donor_site_name, notes)
+  
+  
+  
   
   
   
   
    
-  returnObj <- list(donor_usage) 
+  returnObj <- list(donor_site_usage) 
   return(returnObj) 
 }
 

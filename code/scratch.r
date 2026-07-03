@@ -48,6 +48,18 @@ p_gps_pts_AND <- p_gps_pts1 %>%
   filter(donor_site_name == "Anderson Island")
 
 
+# count mixed donor site cases
+n_both_cases <- sum(planting_summ$donor_site_code_summ2 == "Mix")
+n_fieldMixCases <- sum(planting_summ$donor_site_name_summ == "Mixed")
+n_fieldListCases <- n_both_cases - n_fieldMixCases
+
+donor_usage_expansion <- n_fieldMixCases * 4 + n_fieldListCases * 2
+
+
+
+
+
+
 
 
 

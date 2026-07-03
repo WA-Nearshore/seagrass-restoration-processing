@@ -117,8 +117,12 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   gr_spatial_PT_StPl_sel <- gr_spatial_PT_StPl %>% select(plantingID)
   
   # create initial planting centroids layer
-  ln_centroids <- ln_plantings %>% group_by(plantingID) %>% st_centroid()
-  py_centroids <- py_plantings %>% group_by(plantingID) %>% st_centroid()
+  ln_centroids <- ln_plantings %>% group_by(plantingID) %>% 
+      summarize(geometry = st_union(geometry)) %>%
+      st_centroid()
+  py_centroids <- py_plantings %>% group_by(plantingID) %>% 
+      summarize(geometry = st_union(geometry)) %>%
+      st_centroid()
   planting_centroids <- bind_rows(pt_spatial_PT_StPl_sel,
                                      gr_spatial_PT_StPl_sel,
                                      ln_centroids,
