@@ -110,7 +110,10 @@ donor_collection_pts <- donorObj[[3]]
 
 
 # Create monitoring data table
-monitorObj <- create_monitoring(monitoring_tbl, plantings)
+monitorObj <- create_monitoring(monitoring_tbl, plantings, p_gps_pts1)
+
+
+
 
 # Create monitoring graphs
 

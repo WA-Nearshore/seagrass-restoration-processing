@@ -144,7 +144,7 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites) {
  
   
   # combine single and multiple coord cases to make donor site point layer 
-  donor_site_pt_layer <- rbind(donor_site_singlePts_jn, 
+  donor_site_pt_layer <- rbind(donor_site_singlePts, 
                                donor_site_multiPt_centroids_jn)
   
   
