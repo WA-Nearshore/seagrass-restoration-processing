@@ -33,6 +33,7 @@ source("code/functions/create_sankey.r")
 source("code/functions/rehab_plantings.r")
 source("code/functions/create_restoration_areas.r")
 source("code/functions/create_donor_tbls.r")
+source("code/functions/create_monitoring.r")
 source("code/config_Matrix_FGDB.r")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
@@ -109,6 +110,7 @@ donor_collection_pts <- donorObj[[3]]
 
 
 # Create monitoring data table
+monitorObj <- create_monitoring(monitoring_tbl, plantings)
 
 # Create monitoring graphs
 

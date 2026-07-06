@@ -13,9 +13,10 @@
 xlpath <- 'source_data/Eelgrass_Restoration_Matrix_snapshot_20260623.xlsx'
 
 # Excel sheets to import and process 
-sheet_names <- c("Planting", "lookup table", "Donor Sites")
-new_sheet_names <- c("planting_gps_pts", "plantings_matrix", "donor_sites")
-skip_lines <- c(2,0,1)
+sheet_names <- c("Planting", "lookup table", "Donor Sites", "Monitoring")
+new_sheet_names <- c("planting_gps_pts", "plantings_matrix", "donor_sites",
+                     "monitoring")
+skip_lines <- c(2,0,1,2)
 
 # path to Esri file geodatabase where spatial data is written
 pathFGDB <- '2026_update_Pro_project/2026_update_pro_project.gdb'
