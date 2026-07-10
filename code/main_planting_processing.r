@@ -109,7 +109,8 @@ donor_sites <- donorObj[[2]]
 donor_collection_pts <- donorObj[[3]]
 
 
-# Create monitoring data table
+# Create monitoring data table. Write monitoring records with no matching
+# planting to csv.
 monitorObj <- create_monitoring(monitoring, plantings, p_gps_pts1)
 
 
