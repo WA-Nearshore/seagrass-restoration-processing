@@ -110,7 +110,7 @@ donor_collection_pts <- donorObj[[3]]
 
 
 # Create monitoring data table
-monitorObj <- create_monitoring(monitoring_tbl, plantings, p_gps_pts1)
+monitorObj <- create_monitoring(monitoring, plantings, p_gps_pts1)
 
 
 
@@ -128,7 +128,7 @@ monitorObj <- create_monitoring(monitoring_tbl, plantings, p_gps_pts1)
 
 rm(isheet,get_sheets,matrix_sheets,new_sheet_names,skip_lines,sheet_names)
 rm(xlpath)
-rm(planting_gps_pts)
+# rm(planting_gps_pts)
 rm(clean_planting_gps_pts, create_prj, distill_vals)
 rm(p_gps_pts_cln, prj_out_list, prj_codes)
 rm(plantings_out_list, create_planting_key, create_plantings)
