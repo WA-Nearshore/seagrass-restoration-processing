@@ -51,13 +51,23 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
   mon_tbl_planting_qa <- mon_tbl_planting_qa %>%
     mutate(plt_date_match = ifelse(planting_date.x == planting_date.y,
                                    "match", "no_match"),
-           plt_area_match = ifelse(planted_area_m2.x == planted_area_m2.y,
-                                   "match", "no_match"),
+           plt_area_match = case_when(
+             is.na(planted_area_m2.x) | is.na(planted_area_m2.y) ~ "no_match",
+             !(is.numeric(planted_area_m2.x)) ~ "no_match",
+             !(is.numeric(planted_area_m2.y)) ~ "no_match",
+             planted_area_m2.x != planted_area_m2.y ~ "no_match",
+             near(planted_area_m2.x, planted_area_m2.y) ~ "match",
+             .default = "unknown"
+           ),
            num_shoots_match = ifelse(number_shoots.x == number_shoots.y,
                                      "match", "no_match"),
            plt_method_match = ifelse(planting_method.x == planting_method.y,
                                      "match", "no_match"))
-  
+  planting_date_noMatch_cnt <- sum(mon_tbl_planting_qa$plt_date_match == "no_match")
+  planting_area_noMatch_cnt <- sum(mon_tbl_planting_qa$plt_area_match == "no_match")
+  plt_num_shoots_noMatch_cnt <- sum(mon_tbl_planting_qa$num_shoots_match == "no_match")
+  plt_method_noMatch_cnt <- sum(mon_tbl_planting_qa$plt_method_match == "no_match")
+    
   
   
   
