@@ -47,7 +47,7 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
  
   #######################################################################
   # verify monitoring attributes shared with plantings table 
-  #######################################################################
+  ######################################################################
   mon_tbl_planting_qa <- mon_tbl_planting_qa %>%
     mutate(plt_date_match = ifelse(planting_date.x == planting_date.y,
                                    "match", "no_match"),
