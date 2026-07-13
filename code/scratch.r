@@ -1,6 +1,26 @@
 # scratch when developing, testing
 
 
+a <- is.na(mon_tbl_planting_qa$planted_area_m2.x)
+b <- is.na(mon_tbl_planting_qa$planted_area_m2.y)
+
+
+c <- is.numeric(mon_tbl_planting_qa$planted_area_m2.x)
+d <- is.numeric(mon_tbl_planting_qa$planted_area_m2.y)
+
+
+e <- near(mon_tbl_planting_qa$planted_area_m2.x, 
+          mon_tbl_planting_qa$planted_area_m2.y)
+
+test <- mon_tbl_planting_qa  %>%
+  drop_na(planted_area_m2.x, planted_area_m2.y) %>%
+  filter(!(is.numeric(planted_area_m2.x)),
+         !(is.numeric(planted_area_m2.y)))
+
+
+
+
+
 # check if unique donor site names from p_gps_pts are matched by donor site
 # names in the donor_sites table from the matrix
 p_gps_pts_donor_sites <- data.frame(donor_site_name = unique(p_gps_pts1$donor_site_name))
