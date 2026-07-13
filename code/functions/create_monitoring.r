@@ -53,7 +53,7 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
                                    "match", "no_match"),
            plt_area_match = case_when(
              is.na(planted_area_m2.x) | is.na(planted_area_m2.y) ~ "missing_data",
-             str_detect(planted_area_m2.x,"[^0-9.]" | str_detect(planted_area_m2.y, "[^0-9.]")) ~ "non-numeric", 
+             str_detect(planted_area_m2.x,"[^0-9.]") | str_detect(planted_area_m2.y, "[^0-9.]") ~ "non-numeric", 
              !(near(as.numeric(planted_area_m2.x), as.numeric(planted_area_m2.y))) ~ "no_match",
              near(as.numeric(planted_area_m2.x), as.numeric(planted_area_m2.y)) ~ "match",
              .default = "unknown"
@@ -66,12 +66,21 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
                       planting_date.y, planted_area_m2.y, number_shoots.y, planting_method.y,
            plt_date_match, plt_area_match, num_shoots_match, plt_method_match)
   
-  planting_date_noMatch_cnt <- sum(mon_tbl_planting_qa$plt_date_match == "no_match")
-  planting_area_noMatch_cnt <- sum(mon_tbl_planting_qa$plt_area_match == "no_match")
-  plt_num_shoots_noMatch_cnt <- sum(mon_tbl_planting_qa$num_shoots_match == "no_match")
-  plt_method_noMatch_cnt <- sum(mon_tbl_planting_qa$plt_method_match == "no_match")
+  planting_date_Match_cnt <- sum(mon_tbl_planting_qa$plt_date_match == "match")
+  planting_area_Match_cnt <- sum(mon_tbl_planting_qa$plt_area_match == "match")
+  plt_num_shoots_Match_cnt <- sum(mon_tbl_planting_qa$num_shoots_match == "match")
+  plt_method_Match_cnt <- sum(mon_tbl_planting_qa$plt_method_match == "match")
     
+  ### values above examined from console; discrepancies between values for 
+  ### shared variables in the monitoring and p_gps_pts (matrix:  Planting)
+  ### table.  Monitoring values ignored.
   
+  
+  # simplify the monitoring table
+  mon_tbl_jn_sel <- mon_tbl_jn %>%
+    select(site_location, site_name, monitoring_org, monitoring_date,
+           veg_presence, shoot_count, veg_area_m2, shoot_density_m2,
+           days_since_planted, survival, notes, notes2)
   
   
   
