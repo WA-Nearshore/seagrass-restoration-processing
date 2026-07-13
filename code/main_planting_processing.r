@@ -16,6 +16,13 @@
 #       and grid plantings with their respective planting subsets, and a
 #       planting centroids layers that includes all plantings.
 #    6. create a planting locations point layer
+#    7. create a Sankey diagram visualizing data structure and identify 'rehab'
+#       cases where planting has no GPS coords, but other plantings at same
+#       location do.
+#    8. create restoration areas polygon layer and write to fgdb.
+#    9. create donor usage table, and donor site and donor collection point
+#       point layers and write to fgdb.
+#   10. create monitoroing data table
 #
 #
 #  May 2026
