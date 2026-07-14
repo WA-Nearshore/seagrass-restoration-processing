@@ -39,16 +39,28 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
     left_join(p_gps_pts_jn_tbl, by = "site_name", multiple="first") %>%
     drop_na(plantingID)
  
+  # simplify the monitoring table
+  mon_tbl_jn_sel <- mon_tbl_jn %>%
+    select(site_location, site_name, plantingID, monitoring_org, monitoring_date,
+           veg_presence, shoot_count, veg_area_m2, shoot_density_m2,
+           days_since_planted, survival, notes, notes2)
+ 
+ ##### get breakdown of presence and measured
+ ##### summarize BESE/grid monitoring
+  
+  
+ 
+  #######################################################################
+  # verify monitoring attributes shared with plantings table 
+  ######################################################################
+  
   # Use plantingID just added to monitoring table to join with plantings to
   # verify shared columns
   mon_tbl_planting_qa <- mon_tbl_jn %>%
     left_join(plantings, by="plantingID")
  
- 
-  #######################################################################
-  # verify monitoring attributes shared with plantings table 
-  ######################################################################
-  mon_tbl_planting_qa <- mon_tbl_planting_qa %>%
+   # add 4 match status variables for: planting date, area, num_shoots, method
+   mon_tbl_planting_qa <- mon_tbl_planting_qa %>%
     mutate(plt_date_match = ifelse(planting_date.x == planting_date.y,
                                    "match", "no_match"),
            plt_area_match = case_when(
@@ -58,10 +70,18 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
              near(as.numeric(planted_area_m2.x), as.numeric(planted_area_m2.y)) ~ "match",
              .default = "unknown"
            ),
-           num_shoots_match = ifelse(number_shoots.x == number_shoots.y,
-                                     "match", "no_match"),
-           plt_method_match = ifelse(planting_method.x == planting_method.y,
-                                     "match", "no_match")) %>%
+           num_shoots_match = case_when(
+             is.na(number_shoots.x) | is.na(number_shoots.y) ~ "missing_data",
+             str_detect(number_shoots.x,"[^0-9.]") | str_detect(number_shoots.y, "[^0-9.]") ~ "non-numeric", 
+             as.numeric(number_shoots.x) != as.numeric(number_shoots.y) ~ "no_match",
+             as.numeric(number_shoots.x) == as.numeric(number_shoots.y) ~ "match"
+           ),
+           plt_method_match = case_when(
+             is.na(planting_method.x) | is.na(planting_method.y) ~ "missing_data",
+             planting_method.x != planting_method.y ~ "no_match",
+             planting_method.x == planting_method.y ~ "match"
+           )
+    ) %>% 
     select(site_name, planting_date.x, planted_area_m2.x, number_shoots.x, planting_method.x,
                       planting_date.y, planted_area_m2.y, number_shoots.y, planting_method.y,
            plt_date_match, plt_area_match, num_shoots_match, plt_method_match)
@@ -71,16 +91,11 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
   plt_num_shoots_Match_cnt <- sum(mon_tbl_planting_qa$num_shoots_match == "match")
   plt_method_Match_cnt <- sum(mon_tbl_planting_qa$plt_method_match == "match")
     
-  ### values above examined from console; discrepancies between values for 
+  ### values above examined from console; discrepancies seen between values for 
   ### shared variables in the monitoring and p_gps_pts (matrix:  Planting)
   ### table.  Monitoring values ignored.
   
   
-  # simplify the monitoring table
-  mon_tbl_jn_sel <- mon_tbl_jn %>%
-    select(site_location, site_name, monitoring_org, monitoring_date,
-           veg_presence, shoot_count, veg_area_m2, shoot_density_m2,
-           days_since_planted, survival, notes, notes2)
   
   
   

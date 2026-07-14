@@ -1,5 +1,20 @@
 # scratch when developing, testing
 
+# to inspect site_names for plantings with multiple names (multiple gps pts)
+p_gps_pts_planting_jn_sel <- p_gps_pts1 %>%
+  left_join(plantings, by="plantingID") %>%
+  select(site_name, plantingID, planting_name)
+
+p_gps_pts_planting_jn_sel_filt <- p_gps_pts_planting_jn_sel %>%
+  filter(planting_name == "multiple")
+
+
+# get how many plantings have multiple site names
+sum(plantings$planting_name == "multiple")
+
+
+
+
 
 a <- is.na(mon_tbl_planting_qa$planted_area_m2.x)
 b <- is.na(mon_tbl_planting_qa$planted_area_m2.y)

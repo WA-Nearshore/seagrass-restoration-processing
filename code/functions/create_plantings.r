@@ -34,6 +34,7 @@ create_plantings <- function(p_gps_pts) {
   planting_attr_reduced <- p_gps_pts_key %>%
     group_by(plantingID) %>%
     summarize(
+        planting_name = group_process_char(site_name),
         planting_geometry = group_process_char(planting_geometry),
         activity_type = group_process_char(activity_type),
         planting_date = group_process_date(as_date(planting_date)),
@@ -64,7 +65,8 @@ create_plantings <- function(p_gps_pts) {
   
   # order variables and select only needed variables
   plantings <- plantings_v0 %>%
-    select(plantingID, planting_location_code, planting_date, planting_method,
+    select(plantingID, planting_name, planting_location_code, planting_date, 
+           planting_method,
            donor_site_code, subproj_code, activity_type, planting_geometry, 
            parallel_length_m, perpendicular_length_m, 
            plot_area_m2, planted_area_m2, effective_area_planted_m2,
