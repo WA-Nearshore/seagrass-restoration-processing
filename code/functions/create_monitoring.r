@@ -45,7 +45,34 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
            veg_presence, shoot_count, veg_area_m2, shoot_density_m2,
            days_since_planted, survival, notes, notes2)
  
- ##### get breakdown of presence and measured
+  # recalculate days_since_planting, using trusted planting_date
+  planting_tbl_date <- plantings %>% select(plantingID, planting_date)
+  mon_tbl_1 <- mon_tbl_jn_sel %>% 
+    left_join(planting_tbl_date, by="plantingID") %>%
+    mutate(days_since_planted = as.numeric(difftime(monitoring_date, planting_date,
+                                                    units = "days"))) %>%
+    select(-planting_date)
+  
+  
+  
+  #######################################################################
+  # get breakdown of present/absent and measured 
+  #######################################################################
+  veg_pres_freq <- mon_tbl_1 %>%
+    group_by(veg_presence) %>%
+    summarize(count = n())
+  veg_pres_meas_freq <- mon_tbl_1 %>%
+    filter(veg_presence == "present") %>%
+    mutate(meas = case_when(
+     is.na(shoot_count) ~ "presence_only",
+     is.numeric(shoot_count) ~ "present_measurements"
+   )) %>%
+   group_by(meas) %>%
+   summarize(count = n())
+   
+  
+   
+  
  ##### summarize BESE/grid monitoring
   
   
@@ -93,7 +120,8 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
     
   ### values above examined from console; discrepancies seen between values for 
   ### shared variables in the monitoring and p_gps_pts (matrix:  Planting)
-  ### table.  Monitoring values ignored.
+  ### table.  Monitoring values ignored and not kept in the final monitoring
+  ### table.
   
   
   

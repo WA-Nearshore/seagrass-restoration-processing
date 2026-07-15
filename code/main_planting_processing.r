@@ -22,7 +22,17 @@
 #    8. create restoration areas polygon layer and write to fgdb.
 #    9. create donor usage table, and donor site and donor collection point
 #       point layers and write to fgdb.
-#   10. create monitoroing data table
+#   10. create monitoring data table
+#
+#
+#  Required inputs in <project-folder>/source_data
+#  These inputs are read below in this code file.
+#    1. Seagrass restoration 'Matrix' Excel spreadsheet (file details configured
+#       in code/config_Matrix_FGDB.r). 
+#    2. donor_site_codes.csv:  Associates short codes with donor site names.
+#    3. gps_name_to_planting_name_tbl.csv:  a lookup table to gps-point_names
+#       to planting names for plantings with multiple gps points each with
+#       unique gps-point-names.
 #
 #
 #  May 2026
@@ -43,12 +53,35 @@ source("code/functions/create_donor_tbls.r")
 source("code/functions/create_monitoring.r")
 source("code/config_Matrix_FGDB.r")
 
+
+
+###############################################################################
+# get external data inputs
+###############################################################################
+
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
 # Results in data frames in workspace for each sheet listed in config_Matrix.r
 matrix_sheets <- get_sheets(xlpath, sheet_names, skip_lines)
 for (isheet in seq(1,length(matrix_sheets))) {
   assign(new_sheet_names[isheet], matrix_sheets[[isheet]])
 }
+
+# read table of donor site codes
+donor_site_codes <- read.csv("source_data/donor_site_codes.csv",
+                               stringsAsFactors=FALSE)
+
+# read lookup table to convert gps-pt-names to planting-names for line and
+# polygon plantings with multiple, unique gps-pt-names
+name_lookup_in <- read.csv("source_data/gps_name_to_planting_name_tbl.csv",
+                           stringsAsFactors=FALSE)
+name_lookup <- name_lookup_in %>% select(site_name, planting_name.1) %>%
+  rename(planting_name = planting_name.1)
+
+
+
+###############################################################################
+#  create relational database tables and spatial layers 
+###############################################################################
 
 # Initial clean of planting_gps_pts 
 # filters to table rows; remove dup col, remove location=NA records (blank records)
@@ -60,7 +93,7 @@ sub_projects <- prj_out_list[[1]]
 p_gps_pts0 <- prj_out_list[[2]]
 
 # Create plantings table; add plantingID key to p_gps_pts 
-plantings_out_list<- create_plantings(p_gps_pts0)
+plantings_out_list<- create_plantings(p_gps_pts0, name_lookup)
 p_gps_pts1 <- plantings_out_list[[1]]
 plantings <- plantings_out_list[[2]]
 
@@ -109,8 +142,8 @@ restoration_areas <- restoration_returnObj[[1]]
 planting_locations <- restoration_returnObj[[2]]
 
 
-# Create donor site tables
-donorObj <- create_donor_tbls(p_gps_pts1, donor_sites)
+# Create donor site tables; the function reads in donor site codes from csv
+donorObj <- create_donor_tbls(p_gps_pts1, donor_sites, donor_site_codes)
 donor_site_usage <- donorObj[[1]]
 donor_sites <- donorObj[[2]]
 donor_collection_pts <- donorObj[[3]]
@@ -123,9 +156,15 @@ monitorObj <- create_monitoring(monitoring, plantings, p_gps_pts1)
 
 
 
-# Create monitoring graphs
+###############################################################################
+#  create monitoring graphs 
+###############################################################################
+
+
 
 # Create Online layers with same schema (with graph URLs)
+
+
 
 # Update Online layers
 

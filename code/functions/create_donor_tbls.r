@@ -18,12 +18,8 @@
 library(tidyverse)
 library(sf)
 
-create_donor_tbls <- function(p_gps_pts1, donor_sites) {
+create_donor_tbls <- function(p_gps_pts1, donor_sites, donor_site_codes) {
  
-  # read table of donor site codes
-  donor_site_codes <- read.csv("source_data/donor_site_codes.csv",
-                               stringsAsFactors=FALSE)
-
   
   ########################################################################
   # create donor usage table

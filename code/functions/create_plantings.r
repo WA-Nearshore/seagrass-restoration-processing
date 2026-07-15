@@ -22,7 +22,7 @@ source("code/functions/group_process.r")
 source("code/functions/notes_process.r")
 
 
-create_plantings <- function(p_gps_pts) {
+create_plantings <- function(p_gps_pts, name_lookup) {
 
   # create planting key; somewhat complex so passed to function
   listReturnObj<- create_planting_key(p_gps_pts) 
@@ -34,7 +34,7 @@ create_plantings <- function(p_gps_pts) {
   planting_attr_reduced <- p_gps_pts_key %>%
     group_by(plantingID) %>%
     summarize(
-        planting_name = group_process_char(site_name),
+        planting_name = group_process_planting_name(site_name, name_lookup),
         planting_geometry = group_process_char(planting_geometry),
         activity_type = group_process_char(activity_type),
         planting_date = group_process_date(as_date(planting_date)),

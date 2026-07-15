@@ -1,5 +1,29 @@
 # scratch when developing, testing
 
+# isolate BESE plantings & monitoring to review
+bese_plantings <- plantings %>%
+  filter(str_detect(planting_name, "BESE"))
+grid_plantings <- plantings %>%
+  filter(str_detect(planting_name, "method"))
+
+bese_monitor <- mon_tbl_1 %>% filter(str_detect(site_name, "BESE"))
+grid_monitor <- mon_tbl_1 %>% filter(str_detect(site_name, "methods"))
+
+bese_monitor_summ <- bese_monitor %>% group_by(site_name) %>%
+  summarize(count = n())
+grid_monitor_summ <- grid_monitor %>% group_by(site_name) %>%
+  summarize(count=n())
+
+bese_plantings_jn <- bese_plantings %>%
+  left_join(bese_monitor_summ, by=c("planting_name" = "site_name")) %>%
+  select(planting_name, planting_date, donor_site_code, count)
+
+grid_plantings_jn <- grid_plantings %>% 
+  left_join(grid_monitor_summ, by=c("planting_name" = "site_name")) %>%
+  select(planting_name, planting_date, donor_site_code, count)
+
+
+
 # to inspect site_names for plantings with multiple names (multiple gps pts)
 p_gps_pts_planting_jn_sel <- p_gps_pts1 %>%
   left_join(plantings, by="plantingID") %>%
