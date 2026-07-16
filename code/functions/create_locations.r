@@ -3,8 +3,7 @@
 #  create_locations()
 #
 #  Based on planting GPS points (p_gps_pts), create planting locations table.
-#  Also creates table of planting locations without any GPS coords and writes
-#  this to csv.
+#  Also creates table of planting locations without any GPS coords.
 #
 #  June 2026
 #
@@ -51,10 +50,8 @@ create_locations <- function(p_gps_pts, pathFGDB) {
   #  combined with 'good' to form initial planting_locations table. 
   ##########################################################################
 
-  # for plantings with no coords, write planting location codes to csv file
+  # for plantings with no coords, save records in separate table to return to main
   planting_loc_missing_coords <- coord_counts %>% filter(gps_category=="missing") 
-  write.csv(planting_loc_missing_coords, 
-            file="output_tables/planting_loc_no_coords.csv")
   
   # get centroids for planting locations with multiple sets of coords
   p_gps_pts_mult_cln <- p_gps_pts_jn_cln_mult %>% drop_na(latitude, longitude)
@@ -94,11 +91,6 @@ create_locations <- function(p_gps_pts, pathFGDB) {
   planting_locations <- planting_location_start %>%
     left_join(plt_loc_attr, by="planting_location_code")
  
-  # write planting locatoins point layer to fgdb
-  st_write(planting_locations, dsn=pathFGDB, layer="planting_locations",
-           driver="OpenFileGDB", delete_layer=TRUE)
-    
-  
   
    
   # return list with planting_locations table and platnings with missing coords

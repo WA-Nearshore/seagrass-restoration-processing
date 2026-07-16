@@ -152,19 +152,6 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites, donor_site_codes) {
        select(donor_site_code, lat, long, notes)
   
   
-  
-  
-  ########################################################################
-  # write sf layers to fgdb 
-  ########################################################################
- # donor_collection_pts, donor_site_pt_layer, donor_site_usage (table??) 
- st_write(donor_site_usage, dsn=pathFGDB, layer="donor_site_usage", 
-           driver="OpenFileGDB", delete_layer=TRUE)
- st_write(donor_site_pt_layer, dsn=pathFGDB, layer="donor_sites", 
-           driver="OpenFileGDB", delete_layer=TRUE)
- st_write(donor_collection_pts, dsn=pathFGDB, layer="donor_collection_pts", 
-           driver="OpenFileGDB", delete_layer=TRUE)
-  
    
   returnObj <- list(donor_site_usage, donor_site_pt_layer,
                     donor_collection_pts) 

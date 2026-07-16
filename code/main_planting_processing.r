@@ -12,7 +12,7 @@
 #       key to p_gps_pts
 #    4. extract planting attributes, create a plantings table, add plantingID
 #       as key to p_gps_pts
-#    5. create 5 spatial layers and write them to fgdb: point, line, polygon
+#    5. create 5 spatial layers: point, line, polygon
 #       and grid plantings with their respective planting subsets, and a
 #       planting centroids layers that includes all plantings.
 #    6. create a planting locations point layer
@@ -30,7 +30,7 @@
 #    1. Seagrass restoration 'Matrix' Excel spreadsheet (file details configured
 #       in code/config_Matrix_FGDB.r). 
 #    2. donor_site_codes.csv:  Associates short codes with donor site names.
-#    3. gps_name_to_planting_name_tbl.csv:  a lookup table to gps-point_names
+#    3. gps_name_to_planting_name_tbl.csv:  a lookup table for gps-point_names
 #       to planting names for plantings with multiple gps points each with
 #       unique gps-point-names.
 #
@@ -106,13 +106,14 @@ py_plantings <- lyrsObj[[3]]
 grid_plantings <- lyrsObj[[4]]
 planting_centroids <- lyrsObj[[5]]
 
-# Create planting_locations point sf object and write missing coord cases 
-# to csv. Planting locations points also written to fgdb.
+# Create planting_locations point sf object and separate table of locations
+# missing coordinates.
 planting_loc_returnObj <- create_locations(p_gps_pts1, pathFGDB)
 planting_locations <- planting_loc_returnObj[[1]]
 planting_loc_missing_coords <- planting_loc_returnObj[[2]]
 
-# Create Sankey diagram summarizing structure in the data; also identify
+# Create Sankey diagram summarizing structure in the data. This inventorying
+# is necessary to identify
 # plantingIDs associated with cases w/no planting coords, but planting is
 # associated with a planting_location_code with known coordinates. Using this
 # info these cases can be 'rehabilitated' and added to spatial layers.
@@ -135,7 +136,7 @@ if (dim(rehab_plantingIDs)[1] > 0) {
 }
 
 # Create restoration areas layer and add shared key restoration_area_code to
-# planting_locations and write both to fgdb
+# planting_locations. Both are sf objects.
 restoration_returnObj <- create_restoration_areas(planting_locations, p_gps_pts1,
                                                   pathFGDB)
 restoration_areas <- restoration_returnObj[[1]]
@@ -152,6 +153,12 @@ donor_collection_pts <- donorObj[[3]]
 # Create monitoring data table. Write monitoring records with no matching
 # planting to csv.
 monitorObj <- create_monitoring(monitoring, plantings, p_gps_pts1)
+monitor_tbl <- monitorObj[[1]]
+mon_tbl_noMatch <- monitorObj[[2]]
+plantings_noMonData <- monitorObj[[3]]
+
+
+
 
 
 

@@ -2,7 +2,7 @@
 #
 # create_lyrs()
 #
-# Function to create ArcGIS feature classes in project geodatabase for point,
+# Function to create sf objects for spatial layers of point, 
 # line and polygon plantings, as well as a centroids layer that includes all
 # plantings, all based on the planting GPS points (p_gps_pts) data frame
 # passed as an argument. Only plantings with valid GPS coordinates are converted
@@ -74,7 +74,7 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   py_cln_plantings_3pt <- py_cln_plantings %>% filter(n_gps_pts==3)
   py_recs_cln_3pts <- py_recs_cln_not2pts %>% 
     filter(plantingID %in% py_cln_plantings_3pt$plantingID)
-  py_recs_cln_3pts_addrecs <- py_recs_cln_3pts %>%
+  py_recs_cln_3pts_addrecs <- py_:wrecs_cln_3pts %>%
     group_by(plantingID) %>%
     slice_head(n = 1)
   py_recs_cln_4pts <- rbind(py_recs_cln_not2pts, py_recs_cln_3pts_addrecs)
@@ -127,20 +127,8 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
                                      gr_spatial_PT_StPl_sel,
                                      ln_centroids,
                                      py_centroids) 
-  
-  # write pt and ln planting spatial features to file geodatabase
-  st_write(pt_spatial_PT_StPl_sel, dsn=pathFGDB, layer="pt_plantings", 
-           driver="OpenFileGDB", delete_layer=TRUE)
-  st_write(ln_plantings, dsn=pathFGDB, layer="ln_plantings", 
-           driver="OpenFileGDB", delete_layer=TRUE)
-  st_write(py_plantings, dsn=pathFGDB, layer="py_plantings", 
-           driver="OpenFileGDB", delete_layer=TRUE)
-  st_write(gr_spatial_PT_StPl_sel, dsn=pathFGDB, layer="grid_plantings",
-           driver="OpenFileGDB", delete_layer=TRUE)
-  st_write(planting_centroids, dsn=pathFGDB, layer="planting_centroids",
-           driver="OpenFileGDB", delete_layer=TRUE)
-  
-  
+ 
+   
   # create return object with 5 elements (pt,ln,py,grid,centroid)
   returnObj <- list(pt_spatial_PT_StPl_sel,
                     ln_plantings,

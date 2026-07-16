@@ -51,12 +51,6 @@ create_restoration_areas <- function(planting_locations, p_gps_pts1, pathFGDB) {
  restoration_areas <- final_hulls %>%
    mutate(restoration_area_code = str_replace_all(restoration_area," ","_"))
 
-  
- # write out to project file geodatabase
- st_write(restoration_areas, dsn=pathFGDB, layer="restoration_areas",
-           driver="OpenFileGDB", delete_layer=TRUE)
- st_write(planting_locations, dsn=pathFGDB, layer="planting_locations",
-          driver="OpenFileGDB", delete_layer=TRUE)
 
  returnObj <- list(restoration_areas, planting_locations)
  return(returnObj) 

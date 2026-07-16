@@ -23,6 +23,13 @@ grid_plantings_jn <- grid_plantings %>%
   select(planting_name, planting_date, donor_site_code, count)
 
 
+# to view BESE p_gps_pt records
+p_gps_bese <- p_gps_pts1 %>% filter(str_detect(site_name, "BESE"))
+
+# to view 'method' monitoring records
+mon_methods <- mon_tbl_1 %>% filter(str_detect(site_name, "methods"))
+
+
 
 # to inspect site_names for plantings with multiple names (multiple gps pts)
 p_gps_pts_planting_jn_sel <- p_gps_pts1 %>%
