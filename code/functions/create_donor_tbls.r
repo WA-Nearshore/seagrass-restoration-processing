@@ -33,7 +33,8 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites, donor_site_codes) {
     summarize(planting_location_code = group_process_char(planting_location_code),
               planting_date = group_process_date(planting_date),
               donor_site_name_summ = group_process_char(donor_site_name),
-              donor_site_code_summ2 = group_process_char(donor_site_code_summ))
+              donor_site_code_summ2 = group_process_char(donor_site_code_summ),
+              .groups="drop_last")
   
   # isolate simple 1-to-1 planting-donor cases and make records for usage table
   simple_usage_recs <- planting_summ %>%
@@ -127,7 +128,7 @@ create_donor_tbls <- function(p_gps_pts1, donor_sites, donor_site_codes) {
           filter(donor_site_coord_count > 1) %>%
           group_by(donor_site_name) %>%
           summarize(geometry = st_union(geometry)) %>%
-          st_centroid()
+          {suppressWarnings(st_centroid(.))}
   # process to final set of cols
   donor_site_multiPt_centroids_jn <- donor_site_multiPt_centroids %>%
     left_join(donor_sites_cnt, by="donor_site_name", multiple="first") %>%

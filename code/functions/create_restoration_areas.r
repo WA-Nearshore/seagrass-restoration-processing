@@ -3,15 +3,13 @@
 # create_restoration_areas()
 #
 # Creates polygon sf object with restoration areas.
-# The file geodatabase that the argument pathFGDB points to must have a
-# polygon layer of land areas named 'baselayer'.
 #
 ###############################################################################
 
 library(tidyverse)
 library(sf)
 
-create_restoration_areas <- function(planting_locations, p_gps_pts1, pathFGDB) {
+create_restoration_areas <- function(planting_locations, p_gps_pts1, baselayer) {
  
  # Buffer dimension for point buffers that are grouped for convex hull areas.
  # Dimensions follow EPSG 2927 so are in US Survey feet.
@@ -23,10 +21,6 @@ create_restoration_areas <- function(planting_locations, p_gps_pts1, pathFGDB) {
     drop_na(latitude) %>%
     st_as_sf(coords=c("longitude","latitude"), crs=4326) %>%
     st_transform(crs=2927)
- 
- # read in 'baselayer' from FGDB with land polygons; project to StPl Wash S
- baselayer <- st_read(dsn = pathFGDB, layer = "baselayer_Clip") %>%
-   st_transform(crs=2927)
  
  # make convex hulls around grouped point buffers 
  buffered_pts <- st_buffer(p_gps_pts_sf, dist=buffer_dimension)
@@ -40,7 +34,7 @@ create_restoration_areas <- function(planting_locations, p_gps_pts1, pathFGDB) {
  
  # Create water-only hulls by substracting land areas. This produces both
  # polygon and multipolygon features. Cast all to multipolygon.
- water_hulls <- st_difference(initial_hulls, land_obstacles)
+ water_hulls <- suppressWarnings(st_difference(initial_hulls, land_obstacles))
  final_hulls <- st_cast(water_hulls, "MULTIPOLYGON")
  
  # Create restoration_area_code to serve as table key (no spaces), in both

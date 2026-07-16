@@ -24,7 +24,8 @@ create_locations <- function(p_gps_pts, pathFGDB) {
   coord_counts <- p_gps_pts %>% group_by(planting_location_code) %>%
     summarize(loc_gps_rec_count = n(),
               latsumm = as.numeric(group_process_numeric(as.numeric(latitude))),
-              lonsumm = as.numeric(group_process_numeric(as.numeric(longitude))))
+              lonsumm = as.numeric(group_process_numeric(as.numeric(longitude))),
+              .groups="drop_last")
   # Add category variable for GPS coord status of planting locations: 
   # missing=no coords; good=1 unique set of coords; multiple_pts=>1 set coords
   coord_counts <- coord_counts %>%
@@ -32,7 +33,7 @@ create_locations <- function(p_gps_pts, pathFGDB) {
                                  if_else(latsumm==222.0,"multiple_pts","good")))
   # planting location counts (June 2026): good=118, missing=13, multiple_pts=42
   coord_summary <- coord_counts %>% group_by(gps_category) %>%
-    summarize(count = n())
+    summarize(count = n(), .gropes="drop_last")
   # select columns to make table to join to p_gps_pts  
   loc_code_jn_table <- coord_counts %>% select(planting_location_code, 
                                                loc_gps_rec_count, gps_category) 
@@ -62,7 +63,7 @@ create_locations <- function(p_gps_pts, pathFGDB) {
   plant_loc_mult_centroids <- p_gps_pts_mult_sf_StPl %>% 
     group_by(planting_location_code) %>%
     summarize(geometry = st_union(geometry)) %>%
-    st_centroid()
+    {suppressWarnings(st_centroid(.))}
   
   # combine "good"  planting locations with multiple_pt centroids
   coord_counts_good <- coord_counts %>% 

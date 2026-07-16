@@ -1,3 +1,34 @@
+###############################################################################
+#  write_tbls_lyrs()
+#
+#  Writes out the following objects passed to the function as arguments:
+#   1. relational database tables are written to Esri file geodatabase
+#   2. relational database spatial layers written to same file geodatabase
+#   3. diagnositc tables, e.g. planting locations with no GPS coords, are
+#      written to csv files.
+# 
+#  The file geodatabase used is specified in <HOME>/code/config_Matrix_FGDB.r
+#  The csv files are written to folder <HOME>/output_tables using hard coded 
+#  file names.
+#
+#  July 2026
+#
+###############################################################################
+
+library(tidyverse)
+library(sf)
+
+
+write_tbls_lyrs <- function(sub_projects, plantings, planting_locations,
+                    planting_loc_missing_coords, rehab_plantingIDs,
+                    pt_plantings_rehab, ln_plantings_rehab, py_plantings_rehab,
+                    grid_plantings_rehab, planting_centroids_rehab,
+                    donor_site_usage, donor_sites, donor_collection_pts,
+                    monitor_tbl, mon_tbl_noMatch, plantings_noMonData) {
+
+
+
+
 
 
 
@@ -45,6 +76,6 @@
            driver="OpenFileGDB", delete_layer=TRUE)
  
 
- 
+} 
  
   

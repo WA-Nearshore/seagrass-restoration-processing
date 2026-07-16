@@ -12,6 +12,7 @@
 #
 ###############################################################################
 
+library(tidyverse)
 library(sf)
 source("code/functions/group_process.r")
 
@@ -45,7 +46,7 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   # to the point records for spatial representation
   # get count of gps records by planting
   ln_cln_plantings <- ln_recs_cln %>% group_by(plantingID) %>%
-    summarize(n_gps_pts = n())
+    summarize(n_gps_pts = n(), .groups="drop_last")
   # get line plantings with only 1 gps point
   ln_cln_plantings_1gpsPt <- ln_cln_plantings %>% filter(n_gps_pts==1) 
   # get good line plantings (>1 point) for conversion to spatial line 
@@ -62,7 +63,7 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   # and address these cases
   # get count of gps records by planting
   py_cln_plantings <- py_recs_cln %>% group_by(plantingID) %>%
-    summarize(n_gps_pts = n())
+    summarize(n_gps_pts = n(), .groups="drop_last")
   # A. if only 2 GPS points, transfer these records to the line records.
   py_cln_plantings_2pt <- py_cln_plantings %>% filter(n_gps_pts==2)
   py_recs_cln_2pts <- py_recs_cln %>%
@@ -74,7 +75,7 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   py_cln_plantings_3pt <- py_cln_plantings %>% filter(n_gps_pts==3)
   py_recs_cln_3pts <- py_recs_cln_not2pts %>% 
     filter(plantingID %in% py_cln_plantings_3pt$plantingID)
-  py_recs_cln_3pts_addrecs <- py_:wrecs_cln_3pts %>%
+  py_recs_cln_3pts_addrecs <- py_recs_cln_3pts %>%
     group_by(plantingID) %>%
     slice_head(n = 1)
   py_recs_cln_4pts <- rbind(py_recs_cln_not2pts, py_recs_cln_3pts_addrecs)
@@ -119,10 +120,10 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   # create initial planting centroids layer
   ln_centroids <- ln_plantings %>% group_by(plantingID) %>% 
       summarize(geometry = st_union(geometry)) %>%
-      st_centroid()
+      {suppressWarnings(st_centroid(.))}
   py_centroids <- py_plantings %>% group_by(plantingID) %>% 
       summarize(geometry = st_union(geometry)) %>%
-      st_centroid()
+      {suppressWarnings(st_centroid(.))}
   planting_centroids <- bind_rows(pt_spatial_PT_StPl_sel,
                                      gr_spatial_PT_StPl_sel,
                                      ln_centroids,

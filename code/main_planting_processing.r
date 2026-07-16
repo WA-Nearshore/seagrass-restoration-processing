@@ -77,6 +77,9 @@ name_lookup_in <- read.csv("source_data/gps_name_to_planting_name_tbl.csv",
 name_lookup <- name_lookup_in %>% select(site_name, planting_name.1) %>%
   rename(planting_name = planting_name.1)
 
+# read in 'baselayer' from FGDB with land polygons; project to StPl Wash S
+baselayer <- st_read(dsn = pathFGDB, layer = "baselayer_Clip", quiet = TRUE) %>%
+             st_transform(crs=2927)
 
 
 ###############################################################################
@@ -92,7 +95,7 @@ prj_out_list <- create_prj(p_gps_pts_cln)
 sub_projects <- prj_out_list[[1]]
 p_gps_pts0 <- prj_out_list[[2]]
 
-# Create plantings table; add plantingID key to p_gps_pts 
+# Create plantings table (nonspatial); add plantingID key to p_gps_pts 
 plantings_out_list<- create_plantings(p_gps_pts0, name_lookup)
 p_gps_pts1 <- plantings_out_list[[1]]
 plantings <- plantings_out_list[[2]]
@@ -137,21 +140,22 @@ if (dim(rehab_plantingIDs)[1] > 0) {
 
 # Create restoration areas layer and add shared key restoration_area_code to
 # planting_locations. Both are sf objects.
+# This function reads external data - the WA state baselayer from fgdb.
 restoration_returnObj <- create_restoration_areas(planting_locations, p_gps_pts1,
-                                                  pathFGDB)
+                                                  baselayer) 
 restoration_areas <- restoration_returnObj[[1]]
 planting_locations <- restoration_returnObj[[2]]
 
 
-# Create donor site tables; the function reads in donor site codes from csv
+# Create donor site tables; uses donor site codes read earlier from csv
 donorObj <- create_donor_tbls(p_gps_pts1, donor_sites, donor_site_codes)
 donor_site_usage <- donorObj[[1]]
 donor_sites <- donorObj[[2]]
 donor_collection_pts <- donorObj[[3]]
 
 
-# Create monitoring data table. Write monitoring records with no matching
-# planting to csv.
+# Create monitoring data table. Also returns monitoring records with no matching
+# planting.
 monitorObj <- create_monitoring(monitoring, plantings, p_gps_pts1)
 monitor_tbl <- monitorObj[[1]]
 mon_tbl_noMatch <- monitorObj[[2]]
@@ -159,7 +163,21 @@ plantings_noMonData <- monitorObj[[3]]
 
 
 
-
+###############################################################################
+#  Write relational database tables and layers to fgdb.
+#  Write diagnostic tables (e.g. cases with no matching) to csv file.
+#  Functions returns 0 on error; 1 if successful.
+###############################################################################
+if (write_tbls_lyrs(sub_projects, plantings, planting_locations,
+                    planting_loc_missing_coords, rehab_plantingIDs,
+                    pt_plantings_rehab, ln_plantings_rehab, py_plantings_rehab,
+                    grid_plantings_rehab, planting_centroids_rehab,
+                    donor_site_usage, donor_sites, donor_collection_pts,
+                    monitor_tbl, mon_tbl_noMatch, plantings_noMonData) == 0) {
+   print(" ")
+   print("ERROR in writing output tables and layers.")
+   print(" ")     
+}
 
 
 
@@ -194,3 +212,11 @@ rm(create_locations, create_sankey)
 rm(plantings_matrix)
 rm(create_restoration_areas)
 rm(sankey_returnObj, rehab_returnObj)
+rm(create_donor_tbls, create_monitoring)
+rm(donorObj, group_process_planting_name)
+rm(monitorObj, name_lookup_in, name_lookup, restoration_returnObj)
+rm(donor_site_codes, donor_sites, monitoring)
+rm(planting_loc_returnObj)
+rm(grid_plantings, ln_plantings, planting_centroids, pt_plantings)
+rm(py_plantings, rehab_plantingIDs)
+
