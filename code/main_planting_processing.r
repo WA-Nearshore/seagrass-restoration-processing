@@ -172,6 +172,7 @@ if (write_tbls_lyrs(sub_projects, plantings, planting_locations,
                     planting_loc_missing_coords, rehab_plantingIDs,
                     pt_plantings_rehab, ln_plantings_rehab, py_plantings_rehab,
                     grid_plantings_rehab, planting_centroids_rehab,
+                    restoration_areas,
                     donor_site_usage, donor_sites, donor_collection_pts,
                     monitor_tbl, mon_tbl_noMatch, plantings_noMonData) == 0) {
    print(" ")
