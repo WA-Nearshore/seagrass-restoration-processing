@@ -45,11 +45,11 @@ group_process_date <- function(indata) {
   indata_cln <- na.omit(indata)
   n1 <- length(unique(indata_cln))
   if (n1 == 0) {
-    return(as.Date(NA))
+    return(as.POSIXct(NA))
   } else if (n1 == 1) {
-    return(as.Date(indata_cln[1]))    
+    return(as.POSIXct(indata_cln[1]))    
   } else if (n1 > 1) {
-    return(as.Date("2000-01-01"))
+    return(as.POSIXct("2000-01-01"))
   }
 }
 

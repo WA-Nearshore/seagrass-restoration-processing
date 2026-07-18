@@ -51,6 +51,7 @@ source("code/functions/rehab_plantings.r")
 source("code/functions/create_restoration_areas.r")
 source("code/functions/create_donor_tbls.r")
 source("code/functions/create_monitoring.r")
+source("code/functions/write_tbls_lyrs.r")
 source("code/config_Matrix_FGDB.r")
 
 
@@ -58,6 +59,8 @@ source("code/config_Matrix_FGDB.r")
 ###############################################################################
 # get external data inputs
 ###############################################################################
+
+print("Reading...")
 
 # Import Seagrass Restoration data from Matrix Excel spreadsheet
 # Results in data frames in workspace for each sheet listed in config_Matrix.r
@@ -85,6 +88,8 @@ baselayer <- st_read(dsn = pathFGDB, layer = "baselayer_Clip", quiet = TRUE) %>%
 ###############################################################################
 #  create relational database tables and spatial layers 
 ###############################################################################
+
+print("Creating tables and layers...")
 
 # Initial clean of planting_gps_pts 
 # filters to table rows; remove dup col, remove location=NA records (blank records)
@@ -146,13 +151,11 @@ restoration_returnObj <- create_restoration_areas(planting_locations, p_gps_pts1
 restoration_areas <- restoration_returnObj[[1]]
 planting_locations <- restoration_returnObj[[2]]
 
-
 # Create donor site tables; uses donor site codes read earlier from csv
 donorObj <- create_donor_tbls(p_gps_pts1, donor_sites, donor_site_codes)
 donor_site_usage <- donorObj[[1]]
 donor_sites <- donorObj[[2]]
 donor_collection_pts <- donorObj[[3]]
-
 
 # Create monitoring data table. Also returns monitoring records with no matching
 # planting.
@@ -168,6 +171,9 @@ plantings_noMonData <- monitorObj[[3]]
 #  Write diagnostic tables (e.g. cases with no matching) to csv file.
 #  Functions returns 0 on error; 1 if successful.
 ###############################################################################
+
+print("Writing...")
+
 if (write_tbls_lyrs(sub_projects, plantings, planting_locations,
                     planting_loc_missing_coords, rehab_plantingIDs,
                     pt_plantings_rehab, ln_plantings_rehab, py_plantings_rehab,
