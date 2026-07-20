@@ -56,7 +56,7 @@ create_sankey <- function (p_gps_pts1, plantings_table, planting_locations) {
   L3.4 <- "grid plantings"
  
   plantings_table_by_geom <- plantings_table %>% group_by(planting_geometry) %>%
-    summarize(n_planting_geom = n(), .groups="drop_last")
+    summarize(n_planting_geom = n())
   
   L3_target_vect <- c(L3.1, L3.2, L3.3, L3.4)
   L3_value1 <-  plantings_table_by_geom %>% filter(planting_geometry == "point") %>%
@@ -95,14 +95,12 @@ create_sankey <- function (p_gps_pts1, plantings_table, planting_locations) {
     summarize(count_gps_pts=sum(!is.na(latitude)), latsumm=group_process_numeric(latitude),
               lonsumm=group_process_numeric(longitude),
               planting_geometry=group_process_char(planting_geometry),
-              planting_location_code=group_process_char(planting_location_code),
-              .groups="drop_last") %>%
+              planting_location_code=group_process_char(planting_location_code)) %>%
     mutate(coord_presence = if_else(is.na(latsumm),"missing","good"))
   
   plt_summary <- gps_summary_to_plt %>% group_by(planting_geometry, 
                                                count_gps_pts, coord_presence) %>%
-                                        summarize(count_plantings = n(),
-                                                  .groups="drop_last")
+                                        summarize(count_plantings = n())
   
   L4_target_vect <- c(L4.1, L4.2, L4.3, L4.4, L4.5, L4.6, L4.7, L4.8, L4.9)
   L4_value1 <- plt_summary %>% filter(planting_geometry == "point", 
@@ -199,12 +197,11 @@ create_sankey <- function (p_gps_pts1, plantings_table, planting_locations) {
   loc_coord_status <- p_gps_pts1 %>% group_by(planting_location_code) %>%
     summarize(n_gps_pts = sum(!is.na(latitude)),
               latsumm = group_process_numeric(latitude),
-              lonsumm = group_process_numeric(longitude),
-              .groups="drop_last") %>%
+              lonsumm = group_process_numeric(longitude)) %>%
     mutate(location_coord_status = if_else(is.na(latsumm),"missing","good"))
   # get location freq. by coord status
   freq_loc_coord_status <- loc_coord_status %>% group_by(location_coord_status) %>%
-    summarize(freq_loc_coord_status = n(), .groups="drop_last")
+    summarize(freq_loc_coord_status = n())
  
   
      
@@ -219,7 +216,7 @@ create_sankey <- function (p_gps_pts1, plantings_table, planting_locations) {
   # for plantings with missing coords, get location coord status breakdown
   loc_status_plt_missing <- plt_coord_status_jn_missing %>%
     group_by(location_coord_status) %>%
-    summarize(freq_plt_missing_by_loc_status = n(), .groups="drop_last")
+    summarize(freq_plt_missing_by_loc_status = n())
  
   # get plantingIDs for the cases of planting coords missing but location
   # coords present. These cases need to be added to the spatial point layer

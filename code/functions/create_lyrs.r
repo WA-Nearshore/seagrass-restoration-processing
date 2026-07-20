@@ -2,7 +2,7 @@
 #
 # create_lyrs()
 #
-# Function to create sf objects for spatial layers of point, 
+# Function to create ArcGIS feature classes in project geodatabase for point,
 # line and polygon plantings, as well as a centroids layer that includes all
 # plantings, all based on the planting GPS points (p_gps_pts) data frame
 # passed as an argument. Only plantings with valid GPS coordinates are converted
@@ -12,7 +12,6 @@
 #
 ###############################################################################
 
-library(tidyverse)
 library(sf)
 source("code/functions/group_process.r")
 
@@ -46,7 +45,7 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   # to the point records for spatial representation
   # get count of gps records by planting
   ln_cln_plantings <- ln_recs_cln %>% group_by(plantingID) %>%
-    summarize(n_gps_pts = n(), .groups="drop_last")
+    summarize(n_gps_pts = n())
   # get line plantings with only 1 gps point
   ln_cln_plantings_1gpsPt <- ln_cln_plantings %>% filter(n_gps_pts==1) 
   # get good line plantings (>1 point) for conversion to spatial line 
@@ -63,7 +62,7 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   # and address these cases
   # get count of gps records by planting
   py_cln_plantings <- py_recs_cln %>% group_by(plantingID) %>%
-    summarize(n_gps_pts = n(), .groups="drop_last")
+    summarize(n_gps_pts = n())
   # A. if only 2 GPS points, transfer these records to the line records.
   py_cln_plantings_2pt <- py_cln_plantings %>% filter(n_gps_pts==2)
   py_recs_cln_2pts <- py_recs_cln %>%
@@ -120,16 +119,28 @@ create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
   # create initial planting centroids layer
   ln_centroids <- ln_plantings %>% group_by(plantingID) %>% 
       summarize(geometry = st_union(geometry)) %>%
-      {suppressWarnings(st_centroid(.))}
+      st_centroid()
   py_centroids <- py_plantings %>% group_by(plantingID) %>% 
       summarize(geometry = st_union(geometry)) %>%
-      {suppressWarnings(st_centroid(.))}
+      st_centroid()
   planting_centroids <- bind_rows(pt_spatial_PT_StPl_sel,
                                      gr_spatial_PT_StPl_sel,
                                      ln_centroids,
                                      py_centroids) 
- 
-   
+  
+  # write pt and ln planting spatial features to file geodatabase
+  st_write(pt_spatial_PT_StPl_sel, dsn=pathFGDB, layer="pt_plantings", 
+           driver="OpenFileGDB", delete_layer=TRUE)
+  st_write(ln_plantings, dsn=pathFGDB, layer="ln_plantings", 
+           driver="OpenFileGDB", delete_layer=TRUE)
+  st_write(py_plantings, dsn=pathFGDB, layer="py_plantings", 
+           driver="OpenFileGDB", delete_layer=TRUE)
+  st_write(gr_spatial_PT_StPl_sel, dsn=pathFGDB, layer="grid_plantings",
+           driver="OpenFileGDB", delete_layer=TRUE)
+  st_write(planting_centroids, dsn=pathFGDB, layer="planting_centroids",
+           driver="OpenFileGDB", delete_layer=TRUE)
+  
+  
   # create return object with 5 elements (pt,ln,py,grid,centroid)
   returnObj <- list(pt_spatial_PT_StPl_sel,
                     ln_plantings,

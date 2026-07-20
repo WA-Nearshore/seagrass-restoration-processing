@@ -52,6 +52,7 @@ source("code/functions/create_restoration_areas.r")
 source("code/functions/create_donor_tbls.r")
 source("code/functions/create_monitoring.r")
 source("code/functions/write_tbls_lyrs.r")
+source("code/functions/create_monitoring_graphs.r")
 source("code/config_Matrix_FGDB.r")
 
 
@@ -191,7 +192,7 @@ if (write_tbls_lyrs(sub_projects, plantings, planting_locations,
 ###############################################################################
 #  create monitoring graphs 
 ###############################################################################
-
+graph_status <- create_monitoring_graphs(monitor_tbl)
 
 
 # Create Online layers with same schema (with graph URLs)
@@ -207,7 +208,7 @@ if (write_tbls_lyrs(sub_projects, plantings, planting_locations,
 
 rm(isheet,get_sheets,matrix_sheets,new_sheet_names,skip_lines,sheet_names)
 rm(xlpath)
-# rm(planting_gps_pts)
+rm(planting_gps_pts)
 rm(clean_planting_gps_pts, create_prj, distill_vals)
 rm(p_gps_pts_cln, prj_out_list, prj_codes)
 rm(plantings_out_list, create_planting_key, create_plantings)
