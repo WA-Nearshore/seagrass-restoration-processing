@@ -16,7 +16,8 @@ library(readxl)
 
 get_sheets <- function(source_xl, sheet_names, skip_lines) {
  
-  matrix_sheets <- mapply(function(x,y,z) {read_excel(x, sheet=y, skip=z)},
+  matrix_sheets <- mapply(function(x,y,z) {read_excel(x, sheet=y, skip=z,
+                                                      .name_repair="unique_quiet")},
                           source_xl, sheet_names, skip_lines)
   return(matrix_sheets) 
 }
