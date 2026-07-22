@@ -102,7 +102,7 @@ sub_projects <- prj_out_list[[1]]
 p_gps_pts0 <- prj_out_list[[2]]
 
 # Create plantings table (nonspatial); add plantingID key to p_gps_pts 
-plantings_out_list<- create_plantings(p_gps_pts0, name_lookup)
+plantings_out_list<- create_plantings(p_gps_pts0, name_lookup, donor_site_codes)
 p_gps_pts1 <- plantings_out_list[[1]]
 plantings <- plantings_out_list[[2]]
 

@@ -22,10 +22,10 @@ source("code/functions/group_process.r")
 source("code/functions/notes_process.r")
 
 
-create_plantings <- function(p_gps_pts, name_lookup) {
+create_plantings <- function(p_gps_pts, name_lookup, donor_site_codes) {
 
   # create planting key; somewhat complex so passed to function
-  listReturnObj<- create_planting_key(p_gps_pts) 
+  listReturnObj<- create_planting_key(p_gps_pts, donor_site_codes) 
   p_gps_pts_key <- listReturnObj[[1]]
   plantings_skeleton <- listReturnObj[[2]]
   
@@ -37,7 +37,7 @@ create_plantings <- function(p_gps_pts, name_lookup) {
         planting_name = group_process_planting_name(site_name, name_lookup),
         planting_geometry = group_process_char(planting_geometry),
         activity_type = group_process_char(activity_type),
-        planting_date = group_process_date(as.POSIXct(planting_date)),
+        planting_date = as.POSIXct(group_process_date(planting_date)),
         planting_location_code = group_process_char(planting_location_code_summ),
         planting_method = group_process_char(planting_method_summ),
         parallel_length_m = group_process_numeric(as.numeric(parallel_length_m)),

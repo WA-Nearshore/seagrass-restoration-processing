@@ -26,7 +26,7 @@ library(tidyverse)
 source("code/functions/group_process.r")
 
 
-create_planting_key <- function(p_gps_pts) {
+create_planting_key <- function(p_gps_pts, donor_site_codes) {
  
   ############################################################################ 
   # Add grouping variable to p_gps_pts to associate records by planting,
@@ -50,10 +50,8 @@ create_planting_key <- function(p_gps_pts) {
   # donor sites and codes all multi-donor-source cases as "Mix".
   ############################################################################ 
   
-  # first read donor_site_codes from file and join onto p_gps_pts. The result
-  # is messy with NA occurrences where multipoint geometries have NA for donor site.
-  donor_site_codes <- read.csv("source_data/donor_site_codes.csv",
-                               stringsAsFactors=FALSE)
+  # Join donor_site_codes onto p_gps_pts. The result is messy with NA 
+  # occurrences where multipoint geometries have NA for donor site.
   p_gps_pts_jn <- p_gps_pts1 %>%
     left_join(donor_site_codes, by="donor_site_name")
   
