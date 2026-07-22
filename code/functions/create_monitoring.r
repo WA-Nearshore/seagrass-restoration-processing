@@ -27,10 +27,9 @@ create_monitoring <- function(monitoring, plantings, p_gps_pts1) {
   mon_tbl_cln <- monitoring %>% filter(!(is.na(site_location)))
   
   # anti_join to p_gps_pts to get monitoring records not matched with a 
-  # planting and write to csv file
+  # planting
   mon_tbl_noMatch <- mon_tbl_cln %>%
     anti_join(p_gps_pts1, by = "site_name") 
-  write.csv(mon_tbl_noMatch, file="output_tables/monitoring_recs_noMatch.csv")
 
   # join plantingID column from p_gps_pts onto monitoring table, drop records
   # with no matches

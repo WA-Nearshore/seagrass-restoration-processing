@@ -1,5 +1,10 @@
 # scratch when developing, testing
 
+
+# to see changes within specific code file over last 10 commits:
+# git log -p -n 10 -- code/functions/group_process.r
+
+
 # isolate BESE plantings & monitoring to review
 bese_plantings <- plantings %>%
   filter(str_detect(planting_name, "BESE"))

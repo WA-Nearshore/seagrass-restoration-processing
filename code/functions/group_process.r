@@ -53,6 +53,26 @@ group_process_date <- function(indata) {
   }
 }
 
-
+group_process_planting_name <- function(indata, gps_name_to_planting_name_tbl) {
+  n0 <- length(indata)
+  indata_cln <- na.omit(indata)
+  n1 <- length(unique(indata_cln))
+  if (n1 == 0) {
+    return(as.character(NA))
+  } else if (n1 == 1) {
+    return(as.character(indata_cln[1])) 
+  } else if (n1 > 1) {
+    # join plnating naems onto the gps-pt-names
+    gps_pt_names <- data.frame(gps_pt_names = indata)
+    gps_pt_names_jn <-  gps_pt_names %>%
+      left_join(gps_name_to_planting_name_tbl, by=c("gps_pt_names" = "site_name"))
+    if (length(unique(gps_pt_names_jn$planting_name)) > 1) {
+      print(" ")
+      print("ERROR - gps_pt_name conversion, group process.")
+      print(" ")
+    }
+    return(gps_pt_names_jn$planting_name[1])
+  }
+}
 
 
