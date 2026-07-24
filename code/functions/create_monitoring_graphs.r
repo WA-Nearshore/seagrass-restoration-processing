@@ -14,7 +14,15 @@
 
 library(tidyverse)
 
-create_monitoring_graphs <- function(monitoring_tbl) {
+create_monitoring_graphs <- function(monitoring_tbl, plantings) {
+  
+  
+  
+  
+  
+  
+  
+  
   
   return(1)
 }

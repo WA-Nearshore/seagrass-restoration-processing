@@ -17,7 +17,7 @@ library(sf)
 source("code/functions/group_process.r")
 
 
-create_lyrs <- function(p_gps_pts, plantings_table, pathFGDB) {
+create_lyrs <- function(p_gps_pts, plantings_table) {
 
    
   ########################################################################## 
