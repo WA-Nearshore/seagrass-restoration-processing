@@ -1,48 +1,51 @@
 #########1#########2#########3#########4#########5#########6#########7#########8
 #
-#  Main program to process the two planting tables in the Matrix spreadsheet
-#  containing data from the seagrass restoration program.
+#  Main program to import tables from the Matrix spreadsheet
+#  containing data from the seagrass restoration program. The imported data
+#  is transformed into the seagrass restoration relational database format 
+#  contained in an ArcGIS file geodatabase.
 #
-#  The two tables to be processed:  planting_GPS_points and plantings
+#  The three tables to be imported:  
+#     planting_gps_pts  (from 'Planting' Excel sheet)
+#     donor_sites  (from 'Donor Sites' Excel sheet)
+#     monitoring  (from 'Monitoring' Excel sheet)
 #
 #  Elements of this program:
 #    1. read sources tables from Matrix Excel spreadsheet.
-#    2. conduct basic cleanup and QA
-#    3. extract projects attributes, create a subprojects table, add subproject
-#       key to p_gps_pts
-#    4. extract planting attributes, create a plantings table, add plantingID
-#       as key to p_gps_pts
-#    5. create 5 spatial layers: point, line, polygon
-#       and grid plantings with their respective planting subsets, and a
-#       planting centroids layers that includes all plantings.
-#    6. create a planting locations point layer
-#    7. create a Sankey diagram visualizing data structure and identify 'rehab'
+#    2. process data to generate seagrass restoration relational database tables
+#       including spatial feature classes and non-spatial tables contained in
+#       an ArcGIS file geodatabase (configured in 
+#         <Project-Folder>/code/config_Matrix_FGDB.r)
+#    3. create a Sankey diagram visualizing data structure and identify 'rehab'
 #       cases where planting has no GPS coords, but other plantings at same
 #       location do.
-#    8. create restoration areas polygon layer and write to fgdb.
-#    9. create donor usage table, and donor site and donor collection point
-#       point layers and write to fgdb.
-#   10. create monitoring data table
 #
-#
-#  Required inputs in <project-folder>/source_data
-#  These inputs are read below in this code file.
-#    1. Seagrass restoration 'Matrix' Excel spreadsheet (file details configured
-#       in code/config_Matrix_FGDB.r). 
-#    2. donor_site_codes.csv:  Associates short codes with donor site names.
+#  Required inputs:
+#    1. Seagrass restoration 'Matrix' Excel spreadsheet (file location specified
+#       in <Project-Folder>/code/config_Matrix_FGDB.r). 
+#    2. donor_site_codes.csv:  Associates short codes with donor site names. 
+#       Must be located in <Project-Folder>/source_data
 #    3. gps_name_to_planting_name_tbl.csv:  a lookup table for gps-point_names
 #       to planting names for plantings with multiple gps points each with
-#       unique gps-point-names.
+#       unique gps-point-names. Must be located in 
+#       <Project-Folder>/source_data.
 #
+#  Outputs:
+#    1. 9 spatial feature classes and 4 non-spatial tables written to file
+#       geodatabase (this is the seagrass restoration relational database)
+#    2. 6 diagnostic tables are written as csv files to
+#       <Project-Folder>/output_tables
+#       These tables record cases such as no matching rows across tables or 
+#       missing coordinates.
 #
-#  May 2026
+#  July 2026
 #
 ###############################################################################
 
 library(tidyverse)
 source("code/config_Matrix_FGDB.r")
+source("code/functions/read_inputs.r")
 source("code/functions/create_database.r")
-source("code/functions/get_sheets.r")
 source("code/functions/write_tbls_lyrs.r")
 
 
@@ -52,38 +55,26 @@ source("code/functions/write_tbls_lyrs.r")
 ###############################################################################
 print("Reading...")
 
-# Import Seagrass Restoration data from Matrix Excel spreadsheet
-# Results in data frames in workspace for each sheet listed in config_Matrix.r
-matrix_sheets <- get_sheets(xlpath, sheet_names, skip_lines)
-for (isheet in seq(1,length(matrix_sheets))) {
-  assign(new_sheet_names[isheet], matrix_sheets[[isheet]])
-}
-
-# read table of donor site codes
-donor_site_codes <- read.csv("source_data/donor_site_codes.csv",
-                               stringsAsFactors=FALSE)
-
-# read lookup table to convert gps-pt-names to planting-names for line and
-# polygon plantings with multiple, unique gps-pt-names
-name_lookup_in <- read.csv("source_data/gps_name_to_planting_name_tbl.csv",
-                           stringsAsFactors=FALSE)
-name_lookup <- name_lookup_in %>% select(site_name, planting_name.1) %>%
-  rename(planting_name = planting_name.1)
-
-# read in 'baselayer' from FGDB with land polygons; project to StPl Wash S
-baselayer <- st_read(dsn = pathFGDB, layer = "baselayer_Clip", quiet = TRUE) %>%
-             st_transform(crs=2927)
-
+safeRead <- safely(read_inputs)
+readObj <- safeRead(xlpath, sheet_names, skip_lines, new_sheet_names, pathFGDB)
+if (is.null(readObj$error)) {    # successful
+  list2env(readObj$result, envir = .GlobalEnv)
+  print("successful")
+} else {    # failed
+  print(sprintf("ERROR:  %d", readObj$error))
+} 
+ 
 
 
 ###############################################################################
-#  create relational database tables and spatial layers 
+# Create relational database tables and spatial layers and return them
+# The data arguments passesd to function create_database() hard codes names
+# set in config_Matric_FGDB.r (e.g. planting_gps_pts).
 ###############################################################################
 print("Creating tables and layers...")
 returnOBJdb <- create_database(planting_gps_pts, name_lookup, donor_site_codes,
                                donor_sites, baselayer, pathFGDB)
-list2env(returnObj, envir = .GlobalEnv)
-
+list2env(returnOBJdb, envir = .GlobalEnv)
 
 
 ###############################################################################
