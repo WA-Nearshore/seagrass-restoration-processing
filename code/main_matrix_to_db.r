@@ -18,7 +18,7 @@
 #         <Project-Folder>/code/config_Matrix_FGDB.r)
 #    3. create a Sankey diagram visualizing data structure and identify 'rehab'
 #       cases where planting has no GPS coords, but other plantings at same
-#       location do.
+#       location do have coords.
 #
 #  Required inputs:
 #    1. Seagrass restoration 'Matrix' Excel spreadsheet (file location specified
@@ -51,7 +51,7 @@ source("code/functions/write_tbls_lyrs.r")
 
 
 ###############################################################################
-# get external data inputs
+# Get external data inputs with funtion read_inputs()
 ###############################################################################
 print("Reading...")
 
@@ -59,22 +59,29 @@ safeRead <- safely(read_inputs)
 readObj <- safeRead(xlpath, sheet_names, skip_lines, new_sheet_names, pathFGDB)
 if (is.null(readObj$error)) {    # successful
   list2env(readObj$result, envir = .GlobalEnv)
-  print("successful")
+  print("Reading successful.")
 } else {    # failed
-  print(sprintf("ERROR:  %d", readObj$error))
+  print(sprintf("ERROR:  %s", readObj$error))
 } 
  
 
 
 ###############################################################################
-# Create relational database tables and spatial layers and return them
-# The data arguments passesd to function create_database() hard codes names
-# set in config_Matric_FGDB.r (e.g. planting_gps_pts).
+# Create relational database tables and spatial layers using function
+# create_database(). The data arguments passed to function create_database() 
+# hard codes names set in config_Matric_FGDB.r (e.g. planting_gps_pts).
 ###############################################################################
 print("Creating tables and layers...")
-returnOBJdb <- create_database(planting_gps_pts, name_lookup, donor_site_codes,
-                               donor_sites, baselayer, pathFGDB)
-list2env(returnOBJdb, envir = .GlobalEnv)
+
+safeCreateDB <- safely(create_database)
+createDB_Obj <- safeCreateDB(planting_gps_pts, name_lookup, donor_site_codes,
+                             donor_sites, baselayer, pathFGDB)
+if (is.null(createDB_Obj$error)) {   # successful
+  list2end(createDB_Obj$result, envir = .GlobalEnv)
+  print("Create DB successful.")
+} else {   # failed
+  print(sprintf("ERROR:  %s", createDB_Obj$error)) 
+}
 
 
 ###############################################################################
@@ -84,27 +91,22 @@ list2env(returnOBJdb, envir = .GlobalEnv)
 ###############################################################################
 print("Writing...")
 
-if (write_tbls_lyrs(sub_projects, plantings, planting_locations,
-                    planting_loc_missing_coords, rehab_plantingIDs,
-                    pt_plantings_rehab, ln_plantings_rehab, py_plantings_rehab,
-                    grid_plantings_rehab, planting_centroids_rehab,
-                    restoration_areas,
-                    donor_site_usage, donor_sites, donor_collection_pts,
-                    monitor_tbl, mon_tbl_noMatch, plantings_noMonData) == 0) {
-   print(" ")
-   print("ERROR in writing output tables and layers.")
-   print(" ")     
+safeWrite <- safely(write_tbls_lyrs)
+writeObj <- safeWrite(sub_projects, plantings, planting_locations,
+                      planting_loc_missing_coords, rehab_plantingIDs,
+                      pt_plantings_rehab, ln_plantings_rehab, py_plantings_rehab,
+                      grid_plantings_rehab, planting_centroids_rehab,
+                      restoration_areas,
+                      donor_site_usage, donor_sites, donor_collection_pts,
+                      monitor_tbl, mon_tbl_noMatch, plantings_noMonData)
+if (is.null(writeObj$error)) {    # successful
+  print("Writing successful.") 
+} else {     # failed
+  print(sprintf("ERROR: %s", writeObj$error)) 
 }
 
 
-
-###############################################################################
-#  create monitoring graphs 
-###############################################################################
-mon_graphs <- create_monitoring_graphs(monitor_tbl)
-
-
-
+cat("\nCompleted.\n")
 
 
 rm(isheet,get_sheets,matrix_sheets,new_sheet_names,skip_lines,sheet_names)
