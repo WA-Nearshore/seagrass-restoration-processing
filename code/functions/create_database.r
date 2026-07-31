@@ -114,11 +114,12 @@ create_database <- function(planting_gps_pts, name_lookup, donor_site_codes,
                     donor_sites = donor_sites,
                     donor_collection_pts = donor_collection_pts,
                     monitoring = monitor_tbl,
-                    sub_projects = sub_projecs,
+                    sub_projects = sub_projects,
                     p_sankey = p_sankey,
                     planting_loc_missing_coords = planting_loc_missing_coords,
                     mon_tbl_noMatch = mon_tbl_noMatch,
-                    plantings_noMonData = plantings_noMonData)
+                    plantings_noMonData = plantings_noMonData,
+                    rehab_plantingIDs = rehab_plantingIDs)
   return(returnObj)
 }
 

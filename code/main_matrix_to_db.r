@@ -77,7 +77,7 @@ safeCreateDB <- safely(create_database)
 createDB_Obj <- safeCreateDB(planting_gps_pts, name_lookup, donor_site_codes,
                              donor_sites, baselayer, pathFGDB)
 if (is.null(createDB_Obj$error)) {   # successful
-  list2end(createDB_Obj$result, envir = .GlobalEnv)
+  list2env(createDB_Obj$result, envir = .GlobalEnv)
   print("Create DB successful.")
 } else {   # failed
   cat(sprintf("ERROR:  %s", createDB_Obj$error$message)) 
@@ -94,11 +94,11 @@ print("Writing...")
 safeWrite <- safely(write_tbls_lyrs)
 writeObj <- safeWrite(sub_projects, plantings, planting_locations,
                       planting_loc_missing_coords, rehab_plantingIDs,
-                      pt_plantings_rehab, ln_plantings_rehab, py_plantings_rehab,
-                      grid_plantings_rehab, planting_centroids_rehab,
+                      pt_plantings, ln_plantings, py_plantings,
+                      grid_plantings, planting_centroids,
                       restoration_areas,
                       donor_site_usage, donor_sites, donor_collection_pts,
-                      monitor_tbl, mon_tbl_noMatch, plantings_noMonData)
+                      monitoring, mon_tbl_noMatch, plantings_noMonData)
 if (is.null(writeObj$error)) {    # successful
   print("Writing successful.") 
 } else {     # failed
@@ -109,23 +109,21 @@ if (is.null(writeObj$error)) {    # successful
 cat("\nCompleted.\n")
 
 
-rm(isheet,get_sheets,matrix_sheets,new_sheet_names,skip_lines,sheet_names)
+rm(get_sheets,new_sheet_names,skip_lines,sheet_names)
 rm(xlpath)
 rm(planting_gps_pts)
 rm(clean_planting_gps_pts, create_prj, distill_vals)
-rm(p_gps_pts_cln, prj_out_list, prj_codes)
-rm(plantings_out_list, create_planting_key, create_plantings)
+rm(prj_codes)
+rm(create_planting_key, create_plantings)
 rm(notes_process)
 rm(create_lyrs, group_process_char, group_process_date, group_process_numeric)
-rm(lyrsObj)
-rm(p_gps_pts0, pathFGDB)
+rm(pathFGDB)
 rm(create_locations, create_sankey)
 rm(plantings_matrix)
 rm(create_restoration_areas)
-rm(sankey_returnObj, rehab_returnObj)
 rm(create_donor_tbls, create_monitoring)
-rm(donorObj, group_process_planting_name)
-rm(monitorObj, name_lookup_in, name_lookup, restoration_returnObj)
+rm(group_process_planting_name)
+rm(name_lookup)
 rm(donor_site_codes, donor_sites, monitoring)
 rm(planting_loc_returnObj)
 rm(grid_plantings, ln_plantings, planting_centroids, pt_plantings)
