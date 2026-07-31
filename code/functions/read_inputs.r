@@ -41,8 +41,10 @@ read_inputs <- function(xlpath, sheet_names, skip_lines, new_sheet_names,
 
   # pack return list and return
   returnObj <- list(planting_gps_pts = planting_gps_pts,
+                    name_lookup = name_lookup,
                     plantings_matrix = plantings_matrix,
                     donor_sites = donor_sites,
+                    donor_site_codes = donor_site_codes,
                     monitoring = monitoring)
   return(returnObj)
 }

@@ -2,8 +2,8 @@
 #
 #  Main program to import tables from the Matrix spreadsheet
 #  containing data from the seagrass restoration program. The imported data
-#  is transformed into the seagrass restoration relational database format 
-#  contained in an ArcGIS file geodatabase.
+#  is transformed into the seagrass restoration relational database structure 
+#  contained within an ArcGIS file geodatabase.
 #
 #  The three tables to be imported:  
 #     planting_gps_pts  (from 'Planting' Excel sheet)
@@ -42,7 +42,7 @@
 #
 ###############################################################################
 
-library(tidyverse)
+library(tidyverse, quietly=TRUE)
 source("code/config_Matrix_FGDB.r")
 source("code/functions/read_inputs.r")
 source("code/functions/create_database.r")
@@ -51,25 +51,25 @@ source("code/functions/write_tbls_lyrs.r")
 
 
 ###############################################################################
-# Get external data inputs with funtion read_inputs()
+# Get external data inputs with function read_inputs() - arguments from config
 ###############################################################################
 print("Reading...")
 
 safeRead <- safely(read_inputs)
 readObj <- safeRead(xlpath, sheet_names, skip_lines, new_sheet_names, pathFGDB)
-if (is.null(readObj$error)) {    # successful
+if (is.null(readObj$error)) {    # successful - return items to Global env.
   list2env(readObj$result, envir = .GlobalEnv)
   print("Reading successful.")
 } else {    # failed
-  print(sprintf("ERROR:  %s", readObj$error))
+  cat(sprintf("ERROR:  %s", readObj$error$message))
 } 
  
-
 
 ###############################################################################
 # Create relational database tables and spatial layers using function
 # create_database(). The data arguments passed to function create_database() 
-# hard codes names set in config_Matric_FGDB.r (e.g. planting_gps_pts).
+# hard codes names set in config_Matrix_FGDB.r (e.g. planting_gps_pts), so these
+# argument names must be kept in sync with config_Matrix_FGDB.r.
 ###############################################################################
 print("Creating tables and layers...")
 
@@ -80,14 +80,14 @@ if (is.null(createDB_Obj$error)) {   # successful
   list2end(createDB_Obj$result, envir = .GlobalEnv)
   print("Create DB successful.")
 } else {   # failed
-  print(sprintf("ERROR:  %s", createDB_Obj$error)) 
+  cat(sprintf("ERROR:  %s", createDB_Obj$error$message)) 
 }
 
 
 ###############################################################################
-#  Write relational database tables and layers to fgdb.
-#  Write diagnostic tables (e.g. cases with no matching) to csv file.
-#  Write function returns 0 on error; 1 if successful.
+#  Write relational database tables and layers to fgdb specified in 
+#  config_Matrix_FGDB.r. Also write diagnostic tables (e.g. cases with no 
+#  matching) to csv file. Write function returns 0 on error; 1 if successful.
 ###############################################################################
 print("Writing...")
 
@@ -102,7 +102,7 @@ writeObj <- safeWrite(sub_projects, plantings, planting_locations,
 if (is.null(writeObj$error)) {    # successful
   print("Writing successful.") 
 } else {     # failed
-  print(sprintf("ERROR: %s", writeObj$error)) 
+  cat(sprintf("ERROR: %s", writeObj$error$message)) 
 }
 
 
