@@ -26,3 +26,6 @@ skip_lines <- c(2,0,1,2)
 # path to Esri file geodatabase where spatial data is written
 pathFGDB <- '2026_update_Pro_project/2026_update_pro_project.gdb'
 
+# set system environmental variables to avoid GDAL polygon organization when
+# reading the baselayer (land polygons). This avoids warning for complex poly.
+Sys.setenv(OGR_ORGANIZE_POLYGONS = "SKIP")

@@ -125,7 +125,6 @@ rm(create_donor_tbls, create_monitoring)
 rm(group_process_planting_name)
 rm(name_lookup)
 rm(donor_site_codes, donor_sites, monitoring)
-rm(planting_loc_returnObj)
 rm(grid_plantings, ln_plantings, planting_centroids, pt_plantings)
 rm(py_plantings, rehab_plantingIDs)
 
