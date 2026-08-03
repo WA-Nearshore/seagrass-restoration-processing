@@ -5,20 +5,21 @@
 #  is transformed into the seagrass restoration relational database structure 
 #  contained within an ArcGIS file geodatabase.
 #
-#  The three tables to be imported:  
+#  The three tables to be imported from the Matrix spreadsheet:  
 #     planting_gps_pts  (from 'Planting' Excel sheet)
 #     donor_sites  (from 'Donor Sites' Excel sheet)
 #     monitoring  (from 'Monitoring' Excel sheet)
 #
 #  Elements of this program:
-#    1. read sources tables from Matrix Excel spreadsheet.
-#    2. process data to generate seagrass restoration relational database tables
-#       including spatial feature classes and non-spatial tables contained in
-#       an ArcGIS file geodatabase (configured in 
-#         <Project-Folder>/code/config_Matrix_FGDB.r)
-#    3. create a Sankey diagram visualizing data structure and identify 'rehab'
-#       cases where planting has no GPS coords, but other plantings at same
-#       location do have coords.
+#    1. Read sources tables from Matrix Excel spreadsheet.
+#    2. Process data to generate:
+#       - seagrass restoration relational database tables including spatial 
+#         feature classes and non-spatial tables contained in an ArcGIS file 
+#         geodatabase (fgdb details in <Project-Folder>/code/config_Matrix_FGDB.r)
+#       - a Sankey diagram visualizing data structure and identify 'rehab'
+#         cases where planting has no GPS coords, but other plantings at same
+#        location do have coords.
+#    3. Write outputs to fgdb and to <Projet-Folder>/output_tables
 #
 #  Required inputs:
 #    1. Seagrass restoration 'Matrix' Excel spreadsheet (file location specified
@@ -38,7 +39,7 @@
 #       These tables record cases such as no matching rows across tables or 
 #       missing coordinates.
 #
-#  July 2026
+#  August 2026
 #
 ###############################################################################
 
@@ -124,7 +125,12 @@ rm(create_restoration_areas)
 rm(create_donor_tbls, create_monitoring)
 rm(group_process_planting_name)
 rm(name_lookup)
-rm(donor_site_codes, donor_sites, monitoring)
+rm(donor_site_codes)
 rm(grid_plantings, ln_plantings, planting_centroids, pt_plantings)
 rm(py_plantings, rehab_plantingIDs)
+rm(create_database, createDB_Obj, mon_tbl_noMatch)
+rm(planting_loc_missing_coords, plantings_noMonData)
+rm(read_inputs, readObj, rehab_plantings, run_tools_cli)
+rm(safeCreateDB, safeRead, safeWrite)
+rm(write_tbls_lyrs, writeObj)
 
