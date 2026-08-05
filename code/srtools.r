@@ -23,7 +23,7 @@ run_tools_cli <- function() {
     cat("=========================================\n")
     cat("1. New Data Entry\n")
     cat("2. Import Matrix to Database\n")
-    cat("3. Process New Data\n")
+    cat("3. Create updated monitoring graphs\n")
     cat("4. Promote to Production\n")
     cat("5. Exit Application\n")
     cat("=========================================\n")
