@@ -129,6 +129,7 @@ for (iplanting in uniquePlantingCodes) {
       
 
    # open png device, arrange graphs, close device
+   # # # # alter size with target around 600x450
    fname = str_c("graphs/monitoring_graphs/", iplanting,".png", sep="")
    png(filename=fname, height=150, width=200, units="px")
      
