@@ -44,8 +44,8 @@ run_tools_cli <- function() {
       source("code/main_matrix_to_db.r")  
       
     } else if (user_choice == "3") {
-      cat("\n--- Process New Data ---\n")
-      cat("\nTo be develeped - Creating db view & graphing.") 
+      cat("\n--- Create New Monitoring Graphs ---\n")
+      source("code/main_monitoring_graphs.r") 
      
     } else if (user_choice == "4") {
       cat("\n--- Promote to Production ---\n")

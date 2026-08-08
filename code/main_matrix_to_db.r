@@ -44,7 +44,7 @@
 ###############################################################################
 
 library(tidyverse, quietly=TRUE)
-source("code/config_Matrix_FGDB.r")
+source("code/config_SRTools.r")
 source("code/functions/read_inputs.r")
 source("code/functions/create_database.r")
 source("code/functions/write_tbls_lyrs.r")

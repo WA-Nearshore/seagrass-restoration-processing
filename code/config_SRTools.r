@@ -1,13 +1,25 @@
 ###############################################################################
 #
-# Configuration file for R code to extract seagrass restoration data from
-# the Excel Matrix spreadsheet snapshot, and write processed data to a
-# file geodatabase.
+# Configuration file for R seagrass restoration tools.
 #
-# April 2026
+# August 2026
 #
 ###############################################################################
 
+
+
+################################################################
+# General or shared config parameters across tools
+################################################################
+
+# path to Esri file geodatabase where spatial data is written
+pathFGDB <- '2026_update_Pro_project/2026_update_pro_project.gdb'
+
+
+
+#################################################################
+#  Config parameters used to import data from Matrix spreadsheet 
+#################################################################
 
 # path to source Excel file - e.g. a snapshot of the Matrix spreadsheet
 xlpath <- 'source_data/Eelgrass_Restoration_Matrix_snapshot_20260623.xlsx'
@@ -22,9 +34,6 @@ new_sheet_names <- c("planting_gps_pts", "plantings_matrix", "donor_sites",
                      "monitoring")
 # Numbers of header rows at top of sheet to skip on import
 skip_lines <- c(2,0,1,2)
-
-# path to Esri file geodatabase where spatial data is written
-pathFGDB <- '2026_update_Pro_project/2026_update_pro_project.gdb'
 
 # set system environmental variables to avoid GDAL polygon organization when
 # reading the baselayer (land polygons). This avoids warning for complex poly.
