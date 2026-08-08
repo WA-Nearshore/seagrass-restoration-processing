@@ -14,6 +14,7 @@
 
 library(dplyr)
 library(ggplot2)
+library(patchwork)
 library(grid)
 
 create_monitoring_graphs <- function(monitoring, plantings) {
@@ -56,7 +57,7 @@ create_monitoring_graphs <- function(monitoring, plantings) {
   # loop through plantings and make graphs
   #######################################################################
   cat("Entering loop through plantings to graph...\n")  
-  for (iplanting in mon_plantingID[1]) {
+  for (iplanting in mon_plantingID) {
     
      cat(sprintf("Creating graph for planting %s\n", iplanting)) 
     
@@ -83,11 +84,11 @@ create_monitoring_graphs <- function(monitoring, plantings) {
            geom_point(shape=21, size=4, fill="springgreen3", color="black") +
            theme_bw() +
            theme(
-              axis.title.y = element_text(size = 14,
+              axis.title.y = element_text(size = 16,
                                           margin = margin(t=0,b=0,l=0,r=10,unit="pt")),
               axis.title.x = element_blank(),
-              axis.text = element_text(size=12),
-              panel.grid.major.x = element_line(color="gray80"),
+              axis.text = element_text(size=14),
+              panel.grid.major.x = element_line(color="gray75"),
               panel.border = element_rect(color="gray20", linewidth=0.8)
            ) +
            scale_y_continuous(name="shoot count", limits=iylim) +
@@ -99,34 +100,31 @@ create_monitoring_graphs <- function(monitoring, plantings) {
            geom_point(shape=22, size=4) +
            theme_bw() +
            theme(
-              axis.title.y = element_blank(),
+              axis.title.y = element_text(size=16),
               axis.text.y = element_blank(),
-              axis.text.x = element_text(size=12),
+              axis.text.x = element_text(size=14),
               axis.title.x = element_blank(),
               axis.ticks.y = element_blank(),
               axis.line.x = element_line(),
               panel.grid.major.y = element_blank(),
               panel.grid.minor.y = element_blank(),
+              panel.grid.major.x = element_line(color="gray75"),
               panel.border = element_blank(),
               legend.position = "none"
            ) +
            scale_x_continuous(breaks=ibreaks, labels=ilabels, limits=ixlim) +
+           scale_y_continuous(name="presence") +
            scale_fill_manual(values = c("springgreen3","gray75")) +
            scale_color_manual(values = c("springgreen4", "gray40"))
         
-  
-     # open png device, arrange graphs, close device
+     # construct filename for saving to png 
      fname = str_c("monitoring_graphs/", iplanting,".png", sep="")
-     png(filename=fname, height=450, width=600, units="px")
-       
-     grob1 <- ggplotGrob(p1)
-     grob2 <- ggplotGrob(p2)
-     grob <- rbind(grob1, grob2, size="first")
-     grob$widths <- unit.pmax(grob1$widths, grob2$widths)
-     grid.newpage()
-     grid.draw(grob)
      
-     dev.off()
+     # stack the two graphs using "/" from patchwork package 
+     pstack <- p1 / p2 + plot_layout(heights = c(3,1))
+
+     # Save stacked graphs to png. dpi: screen=72 print=300
+     ggsave(fname, plot=pstack, width=600, height=450, units="px", dpi="screen")      
      
   }  #  close for loop through plantings
   

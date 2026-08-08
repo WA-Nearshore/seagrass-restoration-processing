@@ -16,7 +16,7 @@
 
 
 library(purrr, quietly=TRUE)
-library(sf)
+library(sf, quietly=TRUE)
 source("code/config_SRTools.r")
 source("code/functions/create_monitoring_graphs.r")
 
