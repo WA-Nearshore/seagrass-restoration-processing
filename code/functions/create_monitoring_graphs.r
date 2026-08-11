@@ -17,6 +17,7 @@ library(stringr)
 library(ggplot2)
 library(patchwork)
 library(grid)
+library(scales)
 
 create_monitoring_graphs <- function(monitoring, plantings) {
   
@@ -60,7 +61,7 @@ create_monitoring_graphs <- function(monitoring, plantings) {
   cat("Entering loop through plantings to graph...\n")  
   for (iplanting in mon_plantingID) {
     
-     cat(sprintf("Creating graph for planting %s\n", iplanting)) 
+     cat(sprintf("Creating graph for plantingID =  %s\n", iplanting)) 
     
      idata <- quan_df %>% filter(plantingID == iplanting)
      jdata <- qual_df %>% filter(plantingID == iplanting)
@@ -92,7 +93,8 @@ create_monitoring_graphs <- function(monitoring, plantings) {
               panel.grid.major.x = element_line(color="gray75"),
               panel.border = element_rect(color="gray20", linewidth=0.8)
            ) +
-           scale_y_continuous(name="shoot count", limits=iylim) +
+           scale_y_continuous(name="shoot count", limits=iylim,
+                              labels = label_comma()) +
            scale_x_continuous(breaks=ibreaks, labels=ilabels, limits=ixlim)
     
      # qualitative graph - presence/absence    
