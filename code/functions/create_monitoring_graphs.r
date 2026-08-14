@@ -6,7 +6,8 @@
 #  plantings.
 #
 #  Graphs are created as png files in folder <Project-Folder>/monitoring_graphs
-#  which must be created prior to execution.
+#  which must be created prior to execution. Each png is a 2-panel figure with
+#  a shoot-count graph and a veg presence graph.
 #
 #  July 20, 2025
 #
@@ -44,14 +45,16 @@ create_monitoring_graphs <- function(monitoring, plantings) {
          days_since_planted = rep(0, times = dim(plantingsMon)[1]))
   
   # combine monitoring records with day-0 plantings recs 
-  graphing_recs <- rbind(mon_sel, plantingsMon_recs)
+  mon_and_plant_recs <- rbind(mon_sel, plantingsMon_recs)
+  graphing_recs <- mon_and_plant_recs %>%
+    mutate(veg_presence_fct = factor(veg_presence, 
+                                     levels = c("present","absent")))
   
   # separate categorical (presence/absence)(qual) and numerical data (quan)
   quan_df <- graphing_recs %>% filter(!(is.na(shoot_count)))
   qual_df <- graphing_recs %>% 
     filter(!(is.na(veg_presence)), !(veg_presence == "unknown")) %>%
-    mutate(yval = 1, veg_presence_fct = factor(veg_presence,
-                                               levels = c("present","absent")))
+    mutate(yval = 1)
   
 
     
@@ -83,7 +86,7 @@ create_monitoring_graphs <- function(monitoring, plantings) {
      # get y axis limits
      iylim <- c(0, ceiling(max(idata$shoot_count)))
      p1 <- ggplot(data=idata, mapping=aes(x=days_since_planted, y=shoot_count)) +
-           geom_point(shape=21, size=4, fill="springgreen3", color="black") +
+           geom_point(shape=21, size=4, color="gray15", fill="gray50") +
            theme_bw() +
            theme(
               axis.title.y = element_text(size = 16,
@@ -95,12 +98,13 @@ create_monitoring_graphs <- function(monitoring, plantings) {
            ) +
            scale_y_continuous(name="shoot count", limits=iylim,
                               labels = label_comma()) +
-           scale_x_continuous(breaks=ibreaks, labels=ilabels, limits=ixlim)
+           scale_x_continuous(breaks=ibreaks, labels=ilabels, limits=ixlim) +
+           scale_fill_manual(values = c("springgreen3", "transparent"))
     
      # qualitative graph - presence/absence    
      p2 <- ggplot(data=jdata, mapping=aes(x=days_since_planted, y=yval, 
-                                          fill=veg_presence)) +
-           geom_point(shape=22, size=4) +
+                                          fill=veg_presence_fct)) +
+           geom_point(shape=22, size=4, color="gray20") +
            theme_bw() +
            theme(
               axis.title.y = element_text(size=16),
@@ -113,12 +117,12 @@ create_monitoring_graphs <- function(monitoring, plantings) {
               panel.grid.minor.y = element_blank(),
               panel.grid.major.x = element_line(color="gray75"),
               panel.border = element_blank(),
-              legend.position = "none"
+              legend.position = "bottom",
+              legend.title = element_blank()
            ) +
            scale_x_continuous(breaks=ibreaks, labels=ilabels, limits=ixlim) +
            scale_y_continuous(name="presence") +
-           scale_fill_manual(values = c("springgreen3","gray75")) +
-           scale_color_manual(values = c("springgreen4", "gray40"))
+           scale_fill_manual(values = c("springgreen3","transparent")) 
         
      # construct filename for saving to png 
      fname = str_c("monitoring_graphs/", iplanting,".png", sep="")

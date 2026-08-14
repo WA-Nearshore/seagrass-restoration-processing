@@ -12,7 +12,8 @@
 # General or shared config parameters across tools
 ################################################################
 
-# path to Esri file geodatabase where spatial data is written
+# Path to Esri file geodatabase where spatial data is written.
+# This is relative path relative to R working directory.
 pathFGDB <- '2026_update_Pro_project/2026_update_pro_project.gdb'
 
 
